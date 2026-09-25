@@ -1,0 +1,1317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NextWave | Unified Digital Healthcare Platform</title>
+    
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        primary: { 50: '#eff6ff', 100: '#dbeafe', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8' },
+                        medical: { light: '#d1fae5', DEFAULT: '#10b981', dark: '#047857' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        html { scroll-behavior: smooth; }
+        .fade-in { animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <!-- Navbar -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex-shrink-0 flex items-center cursor-pointer" onclick="location.reload()">
+                    <div class="w-10 h-10 bg-primary-600 rounded-xl flex items-center justify-center text-white mr-3 shadow-lg shadow-primary-500/30">
+                        <i class="fas fa-brain text-xl"></i>
+                    </div>
+                    <div>
+                        <span class="font-bold text-2xl tracking-tight text-slate-900">Next<span class="text-primary-600">Wave</span></span>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-4">
+                    <!-- Language Selector triggering JS -->
+                    <div class="relative inline-block text-left">
+                        <select id="langSelector" onchange="changeLanguage(this.value)" class="block w-full pl-3 pr-8 py-2 text-sm border-slate-300 focus:outline-none focus:ring-primary-500 focus:border-primary-500 rounded-lg bg-slate-50 text-slate-700 font-medium cursor-pointer appearance-none border">
+                            <option value="en">🌐 English</option>
+                            <option value="mr">🌐 मराठी (Marathi)</option>
+                            <option value="hi">🌐 हिंदी (Hindi)</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-500">
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </div>
+                    </div>
+                    
+                    <button id="logoutBtn" class="hidden text-sm font-medium text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 px-4 py-2 rounded-lg transition-colors" onclick="location.reload()">
+                        <i class="fas fa-sign-out-alt mr-2"></i><span data-i18n="logout">Logout</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- LANDING VIEW -->
+    <div id="landingView" class="flex-grow flex flex-col justify-center view-section">
+        <main class="max-w-7xl mx-auto px-4 py-12 flex flex-col lg:flex-row items-center gap-12 w-full">
+            <div class="w-full lg:w-1/2 space-y-8 text-center lg:text-left fade-in">
+                <h1 class="text-4xl sm:text-5xl font-extrabold text-slate-900 leading-tight">
+                    Unified Digital <br/>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-medical">Healthcare</span> Platform
+                </h1>
+                <p class="text-lg text-slate-600" data-i18n="hero_desc">One secure account. Complete health history. Connected care.</p>
+            </div>
+
+            <div class="w-full lg:w-1/2 max-w-md mx-auto fade-in">
+                <div class="bg-white rounded-2xl shadow-xl border border-slate-100 p-8">
+                    <div class="text-center mb-8">
+                        <h2 class="text-2xl font-bold text-slate-900" data-i18n="login_title">Patient Login</h2>
+                    </div>
+                    <div class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-2" data-i18n="login_label">ABHA ID</label>
+                            <div class="relative">
+                                <svg class="absolute left-3 top-3.5 w-5 h-5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="2.5" y="5" width="19" height="14" rx="2"></rect>
+                                    <circle cx="8" cy="11" r="2"></circle>
+                                    <path d="M4.5 16.2c.6-1.6 2-2.4 3.5-2.4s2.9.8 3.5 2.4"></path>
+                                    <line x1="14.5" y1="9.5" x2="18.5" y2="9.5"></line>
+                                    <line x1="14.5" y1="12.5" x2="18.5" y2="12.5"></line>
+                                </svg>
+                                <input type="text" id="abhaId" class="w-full pl-10 pr-3 py-3 border border-slate-300 rounded-xl outline-none focus:border-primary-500" value="91-4432-8871-0021">
+                            </div>
+                        </div>
+
+                        <div id="otpSection" class="hidden">
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">Enter OTP</label>
+                            <div class="flex justify-between gap-2 mb-2">
+                                <input type="text" maxlength="1" class="w-12 h-12 text-center text-xl font-bold border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none otp-input">
+                                <input type="text" maxlength="1" class="w-12 h-12 text-center text-xl font-bold border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none otp-input">
+                                <input type="text" maxlength="1" class="w-12 h-12 text-center text-xl font-bold border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none otp-input">
+                                <input type="text" maxlength="1" class="w-12 h-12 text-center text-xl font-bold border border-slate-300 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none otp-input">
+                            </div>
+                        </div>
+
+                        <button id="getOtpBtn" onclick="requestOtp()" class="w-full bg-slate-900 text-white font-semibold py-3.5 rounded-xl" data-i18n="get_otp">Get OTP</button>
+                        <button id="loginBtn" onclick="processLogin()" class="hidden w-full bg-primary-600 text-white font-semibold py-3.5 rounded-xl" data-i18n="verify_login">Verify & Login</button>
+                        <div id="messageBox" class="mt-4 hidden p-3 rounded-lg text-sm text-center font-medium"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- DASHBOARD VIEW -->
+    <div id="dashboardView" class="hidden flex-grow flex-col view-section">
+        <main class="max-w-5xl mx-auto px-4 py-8 w-full space-y-8">
+            
+            <!-- Patient Profile -->
+            <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 md:p-8 relative overflow-hidden">
+                <div class="flex flex-col md:flex-row gap-6 items-center md:items-start">
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face" alt="Patient" class="w-28 h-28 rounded-full object-cover border-4 border-white shadow-lg">
+                    <div class="flex-grow w-full">
+                        <h1 class="text-2xl md:text-3xl font-bold text-slate-900">Ramesh Kumar</h1>
+                        <p class="text-primary-600 font-semibold mb-4"><i class="fas fa-id-card"></i> ABHA: 91-4432-8871-0021</p>
+                        
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 border-t border-slate-100 pt-4">
+                            <div><p class="text-[11px] font-bold text-slate-400" data-i18n="age_sex">Age & Sex</p><p class="font-semibold text-sm">45 Yrs, Male</p></div>
+                            <div><p class="text-[11px] font-bold text-slate-400">Blood Group</p><p class="text-red-600 font-bold text-sm">O+</p></div>
+                            <div><p class="text-[11px] font-bold text-slate-400" data-i18n="phone">Phone</p><p class="font-semibold text-sm">+91 9876543210</p></div>
+                            <div><p class="text-[11px] font-bold text-slate-400" data-i18n="address">Address</p><p class="font-semibold text-sm">123 Rural Pune, MH</p></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features Grid -->
+            <div>
+                <h2 class="text-xl font-bold text-slate-800 mb-4" data-i18n="services">Healthcare Services</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    
+                    <!-- Medical History Card -->
+                    <div onclick="switchView('medicalHistoryView')" class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:shadow-md cursor-pointer transition flex flex-col items-center text-center">
+                        <div class="w-14 h-14 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mb-3">
+                            <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"></path>
+                                <path d="M14 3v5h5"></path>
+                                <line x1="12" y1="12" x2="12" y2="17"></line>
+                                <line x1="9.5" y1="14.5" x2="14.5" y2="14.5"></line>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-900 mb-1" data-i18n="med_history">Medical History</h3>
+                        <p class="text-sm text-slate-500">View past records, prescriptions, and test reports.</p>
+                    </div>
+
+                    <!-- Find Hospitals Card -->
+                    <div onclick="switchView('findHospitalsView')" class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:shadow-md cursor-pointer transition flex flex-col items-center text-center">
+                        <div class="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mb-3">
+                            <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4 21V7a1 1 0 0 1 1-1h5V4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v2h5a1 1 0 0 1 1 1v14"></path>
+                                <line x1="2.5" y1="21" x2="21.5" y2="21"></line>
+                                <line x1="11" y1="9.5" x2="13" y2="9.5"></line>
+                                <line x1="12" y1="8.5" x2="12" y2="10.5"></line>
+                                <line x1="8" y1="14" x2="8" y2="14.01"></line>
+                                <line x1="16" y1="14" x2="16" y2="14.01"></line>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-900 mb-1" data-i18n="find_hospitals">Find Hospitals</h3>
+                        <p class="text-sm text-slate-500">Locate nearby PHCs and check doctor availability.</p>
+                    </div>
+
+                    <!-- Find Pharmacies Card -->
+                    <div onclick="switchView('findPharmaciesView')" class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 hover:shadow-md cursor-pointer transition flex flex-col items-center text-center">
+                        <div class="w-14 h-14 bg-orange-50 text-orange-600 rounded-full flex items-center justify-center mb-3">
+                            <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="9.5" width="18" height="7" rx="3.5" transform="rotate(-45 12 13)"></rect>
+                                <line x1="9.5" y1="16.5" x2="14.5" y2="9.5"></line>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-bold text-slate-900 mb-1" data-i18n="find_pharmacies">Find Pharmacies</h3>
+                        <p class="text-sm text-slate-500">Check medicine stocks at local dispensaries.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- MEDICAL HISTORY VIEW -->
+    <div id="medicalHistoryView" class="hidden flex-grow flex-col view-section">
+        <main class="max-w-4xl mx-auto px-4 py-8 w-full space-y-6 fade-in">
+            <button onclick="switchView('dashboardView')" class="text-slate-500 hover:text-primary-600 font-medium mb-2 flex items-center">
+                <i class="fas fa-arrow-left mr-2"></i> <span data-i18n="back_btn">Back to Dashboard</span>
+            </button>
+            <h2 class="text-3xl font-bold text-slate-900" data-i18n="med_history">Medical History</h2>
+            
+            <div class="space-y-4">
+                <!-- Record 1 -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div class="flex-grow">
+                        <span class="text-xs font-bold bg-blue-100 text-blue-700 px-2 py-1 rounded mb-2 inline-block">Sep 15, 2026</span>
+                        <h3 class="font-bold text-lg text-slate-800" data-i18n="med_record_1_title">General Checkup & Viral Fever</h3>
+                        <!-- Added Description -->
+                        <p class="text-sm text-slate-700 font-medium mt-1 mb-1" data-i18n="med_record_1_desc">Patient exhibited high temperature and body ache. Prescribed antipyretics and rest for 3 days.</p>
+                        <p class="text-sm text-slate-500" data-i18n="med_record_1_dr">Consulted: Dr. Amit Sharma (City Hospital)</p>
+                    </div>
+                    <!-- Added onclick modal trigger -->
+                    <button onclick="openModal('prescription')" class="flex-shrink-0 px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 hover:bg-slate-100 transition"><i class="fas fa-download mr-1"></i> <span data-i18n="btn_prescription">Prescription</span></button>
+                </div>
+                
+                <!-- Record 2 -->
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div class="flex-grow">
+                        <span class="text-xs font-bold bg-purple-100 text-purple-700 px-2 py-1 rounded mb-2 inline-block">Aug 02, 2026</span>
+                        <h3 class="font-bold text-lg text-slate-800" data-i18n="med_record_2_title">Complete Blood Count (CBC)</h3>
+                        <!-- Added Description -->
+                        <p class="text-sm text-slate-700 font-medium mt-1 mb-1" data-i18n="med_record_2_desc">Routine blood work to check hemoglobin and platelet count. All parameters within normal limits.</p>
+                        <p class="text-sm text-slate-500" data-i18n="med_record_2_lab">Lab: Rural Diagnostics Pune</p>
+                    </div>
+                    <!-- Added onclick modal trigger -->
+                    <button onclick="openModal('report')" class="flex-shrink-0 px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 hover:bg-slate-100 transition"><i class="fas fa-eye mr-1"></i> <span data-i18n="btn_report">View Report</span></button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- FIND HOSPITALS VIEW -->
+    <div id="findHospitalsView" class="hidden flex-grow flex-col view-section">
+        <main class="max-w-4xl mx-auto px-4 py-8 w-full space-y-6 fade-in">
+            <button onclick="switchView('dashboardView')" class="text-slate-500 hover:text-primary-600 font-medium mb-2 flex items-center">
+                <i class="fas fa-arrow-left mr-2"></i> <span data-i18n="back_btn">Back to Dashboard</span>
+            </button>
+            <h2 class="text-3xl font-bold text-slate-900" data-i18n="find_hospitals">Find Hospitals</h2>
+            
+            <!-- Search Bar -->
+            <div class="relative">
+                <i class="fas fa-search absolute left-4 top-3.5 text-slate-400"></i>
+                <input type="text" id="hospitalSearch" data-i18n-placeholder="search_hospital" onkeyup="filterList('hospitalSearch', 'hospital-card')" placeholder="Search by hospital name or location..." class="w-full pl-12 pr-4 py-3 bg-white border border-slate-300 rounded-xl outline-none focus:border-emerald-500 shadow-sm">
+            </div>
+
+            <!-- Results -->
+            <div class="space-y-4" id="hospitalList">
+                <div class="hospital-card bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row justify-between gap-4">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <h3 class="font-bold text-lg text-slate-800" data-i18n="hospital_1_name">City General PHC</h3>
+                            <span class="text-xs font-bold bg-green-100 text-green-700 px-2 py-0.5 rounded-full"><i class="fas fa-map-marker-alt"></i> 2.5 km</span>
+                        </div>
+                        <p class="text-sm text-slate-500 mb-3" data-i18n="hospital_1_addr">14 Mahatma Gandhi Road, Pune</p>
+                        <div class="bg-slate-50 rounded p-2 text-sm">
+                            <p><span class="font-semibold text-slate-700" data-i18n="dr_smith">Dr. Smith (Cardiology):</span> <span class="text-green-600 font-medium" data-i18n="dr_smith_avail">Available Now (Token 12)</span></p>
+                            <p><span class="font-semibold text-slate-700" data-i18n="dr_joshi">Dr. Joshi (General):</span> <span class="text-orange-500 font-medium" data-i18n="dr_joshi_avail">Available at 2:00 PM</span></p>
+                        </div>
+                    </div>
+                    <div class="flex sm:items-center">
+                        <svg class="w-5 h-5 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
+                    </div>
+                </div>
+
+                <div class="hospital-card bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row justify-between gap-4">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <h3 class="font-bold text-lg text-slate-800" data-i18n="hospital_2_name">Rural Care Clinic</h3>
+                            <span class="text-xs font-bold bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full"><i class="fas fa-map-marker-alt"></i> 5.0 km</span>
+                        </div>
+                        <p class="text-sm text-slate-500 mb-3" data-i18n="hospital_2_addr">East Sector, Outskirts, Pune</p>
+                        <div class="bg-slate-50 rounded p-2 text-sm">
+                            <p><span class="font-semibold text-slate-700" data-i18n="dr_patel">Dr. Patel (Pediatrics):</span> <span class="text-green-600 font-medium" data-i18n="dr_patel_avail">Available Now (Token 4)</span></p>
+                        </div>
+                    </div>
+                    <div class="flex sm:items-center">
+                        <svg class="w-5 h-5 text-slate-300" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- FIND PHARMACIES VIEW -->
+    <div id="findPharmaciesView" class="hidden flex-grow flex-col view-section">
+        <main class="max-w-4xl mx-auto px-4 py-8 w-full space-y-6 fade-in">
+            <button onclick="switchView('dashboardView')" class="text-slate-500 hover:text-primary-600 font-medium mb-2 flex items-center">
+                <i class="fas fa-arrow-left mr-2"></i> <span data-i18n="back_btn">Back to Dashboard</span>
+            </button>
+            <h2 class="text-3xl font-bold text-slate-900" data-i18n="find_pharmacies">Find Pharmacies</h2>
+            
+            <div class="relative">
+                <i class="fas fa-search absolute left-4 top-3.5 text-slate-400"></i>
+                <input type="text" id="pharmacySearch" data-i18n-placeholder="search_pharmacy" onkeyup="filterList('pharmacySearch', 'pharmacy-card')" placeholder="Search by medicine or pharmacy name..." class="w-full pl-12 pr-4 py-3 bg-white border border-slate-300 rounded-xl outline-none focus:border-blue-500 shadow-sm">
+            </div>
+
+            <div class="space-y-4" id="pharmacyList">
+                <div class="pharmacy-card bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row justify-between gap-4">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <h3 class="font-bold text-lg text-slate-800" data-i18n="pharm_1_name">Govt. Dispensary Hub</h3>
+                            <span class="text-xs font-bold bg-green-100 text-green-700 px-2 py-0.5 rounded-full"><i class="fas fa-map-marker-alt"></i> 1.2 km</span>
+                        </div>
+                        <p class="text-sm text-slate-500 mb-3" data-i18n="pharm_1_addr">Main Square, Pune</p>
+                        <div class="bg-slate-50 rounded p-2 text-sm">
+                            <p class="font-semibold text-slate-700 mb-1" data-i18n="stock_status">Stock Status:</p>
+                            <span class="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded mr-1" data-i18n="para_stock">Paracetamol: In Stock</span>
+                            <span class="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded mr-1" data-i18n="amox_stock">Amoxicillin: In Stock</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pharmacy-card bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex flex-col sm:flex-row justify-between gap-4">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <h3 class="font-bold text-lg text-slate-800" data-i18n="pharm_2_name">Sanjeevani Medico (PHC)</h3>
+                            <span class="text-xs font-bold bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full"><i class="fas fa-map-marker-alt"></i> 3.4 km</span>
+                        </div>
+                        <p class="text-sm text-slate-500 mb-3" data-i18n="pharm_2_addr">Rural Link Road, Pune</p>
+                        <div class="bg-slate-50 rounded p-2 text-sm">
+                            <p class="font-semibold text-slate-700 mb-1" data-i18n="stock_status">Stock Status:</p>
+                            <span class="inline-block bg-red-100 text-red-800 text-xs px-2 py-1 rounded mr-1" data-i18n="ins_stock">Insulin: Low Stock</span>
+                            <span class="inline-block bg-green-100 text-green-800 text-xs px-2 py-1 rounded mr-1" data-i18n="asp_stock">Aspirin: In Stock</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- DOCUMENT MODAL -->
+    <div id="documentModal" class="fixed inset-0 z-[100] hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden flex flex-col fade-in">
+            <div class="p-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
+                <h3 id="modalTitle" class="font-bold text-lg text-slate-800">Document View</h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-red-500 transition"><i class="fas fa-times text-xl"></i></button>
+            </div>
+            <div class="p-4 sm:p-6 bg-slate-100 flex-grow flex justify-center items-start overflow-auto max-h-[75vh]">
+                <!-- Professional document render (built dynamically in openModal) -->
+                <div id="modalDocument" class="w-full max-w-xl bg-white rounded shadow border border-slate-300"></div>
+            </div>
+            <div class="p-4 border-t border-slate-200 bg-white flex justify-end gap-3">
+                <button onclick="window.print()" class="px-5 py-2 bg-primary-50 text-primary-700 rounded-lg text-sm font-medium hover:bg-primary-100 transition"><i class="fas fa-print mr-1"></i> Print</button>
+                <button onclick="closeModal()" class="px-5 py-2 bg-slate-200 text-slate-800 rounded-lg text-sm font-medium hover:bg-slate-300 transition">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Logic Script -->
+    <script>
+        /* State & Navigation Management */
+        function switchView(targetId) {
+            const views = document.querySelectorAll('.view-section');
+            views.forEach(view => {
+                if(view.id === targetId) {
+                    view.classList.remove('hidden');
+                    view.classList.add('flex');
+                } else {
+                    view.classList.add('hidden');
+                    view.classList.remove('flex');
+                }
+            });
+            window.scrollTo(0,0);
+        }
+
+        /* Search Filter Logic */
+        function filterList(inputId, cardClass) {
+            let input = document.getElementById(inputId).value.toLowerCase();
+            let cards = document.getElementsByClassName(cardClass);
+            
+            for (let i = 0; i < cards.length; i++) {
+                let textContent = cards[i].innerText.toLowerCase();
+                if (textContent.includes(input)) {
+                    cards[i].style.display = "";
+                } else {
+                    cards[i].style.display = "none";
+                }
+            }
+        }
+
+        /* Message UI */
+        function showMessage(msg, type = 'info') {
+            const box = document.getElementById('messageBox');
+            box.textContent = msg;
+            box.className = 'mt-4 p-3 rounded-lg text-sm text-center font-medium ' + 
+                (type === 'error' ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600');
+            setTimeout(() => { box.classList.add('hidden'); }, 3000);
+        }
+
+        /* Login Simulation */
+        function requestOtp() {
+            const abhaInput = document.getElementById('abhaId').value;
+            if(abhaInput.length < 5) return showMessage('Invalid ABHA ID', 'error');
+
+            document.getElementById('getOtpBtn').innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            setTimeout(() => {
+                document.getElementById('otpSection').classList.remove('hidden');
+                document.getElementById('getOtpBtn').classList.add('hidden');
+                document.getElementById('loginBtn').classList.remove('hidden');
+                document.querySelector('.otp-input').focus();
+                showMessage('OTP Sent!', 'success');
+            }, 800);
+        }
+
+        const otpInputs = document.querySelectorAll('.otp-input');
+        otpInputs.forEach((input, index) => {
+            input.addEventListener('input', (e) => {
+                if (e.target.value.length === 1 && index < otpInputs.length - 1) otpInputs[index + 1].focus();
+            });
+        });
+
+       function processLogin() {
+    const loginBtn = document.getElementById('loginBtn');
+    const abhaId = document.getElementById('abhaId').value.trim();
+
+    const otpInputs = document.querySelectorAll('.otp-input');
+    let otp = "";
+
+    otpInputs.forEach(input => {
+        otp += input.value.trim();
+    });
+
+    if (otp.length !== 4) {
+        showMessage('Please enter the 4-digit OTP', 'error');
+        return;
+    }
+
+    loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+    fetch(`http://localhost:5000/api/patients/${encodeURIComponent(abhaId)}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Patient not found");
+            }
+
+            return response.json();
+        })
+        .then(patient => {
+
+            window.currentPatient = patient;
+
+            console.log("Patient logged in:", patient);
+
+            switchView('dashboardView');
+
+            document.getElementById('logoutBtn').classList.remove('hidden');
+
+            document.body.classList.replace(
+                'bg-slate-50',
+                'bg-slate-100'
+            );
+
+            showMessage('Login successful!', 'success');
+        })
+        .catch(error => {
+
+            console.error("Login error:", error);
+
+            showMessage(
+                'Patient not found. Please check your ABHA ID.',
+                'error'
+            );
+        })
+        .finally(() => {
+            loginBtn.innerHTML = 'Verify & Login';
+        });
+}
+
+
+async function getPatientFromBackend(abhaId) {
+    try {
+        const response = await fetch(
+            `http://localhost:5000/api/patients/${encodeURIComponent(abhaId)}`
+        );
+
+        if (!response.ok) {
+            throw new Error("Patient not found");
+        }
+
+        const patient = await response.json();
+
+        console.log("Patient data from backend:", patient);
+
+        return patient;
+
+    } catch (error) {
+        console.error("Backend error:", error);
+        return null;
+    }
+}
+async function getPatientPrescriptions() {
+    try {
+        if (!window.currentPatient) {
+            console.error("No patient is logged in");
+            return [];
+        }
+
+        const response = await fetch(
+            "http://localhost:5000/api/prescriptions"
+        );
+
+        if (!response.ok) {
+            throw new Error("Failed to get prescriptions");
+        }
+
+        const prescriptions = await response.json();
+
+        // Show only the logged-in patient's prescriptions
+        const patientPrescriptions = prescriptions.filter(
+            prescription =>
+                prescription.patientId &&
+                prescription.patientId._id === window.currentPatient._id
+        );
+
+        console.log("Patient prescriptions:", patientPrescriptions);
+
+        return patientPrescriptions;
+
+    } catch (error) {
+        console.error("Prescription backend error:", error);
+        return [];
+    }
+}
+
+    async function getPatientLabOrders() {
+    try {
+        if (!window.currentPatient) {
+            console.error("No patient is logged in");
+            return [];
+        }
+
+        const response = await fetch(
+            "http://localhost:5000/api/lab-orders"
+        );
+
+        if (!response.ok) {
+            throw new Error("Failed to get lab orders");
+        }
+
+        const orders = await response.json();
+
+        const patientOrders = orders.filter(
+            order =>
+                order.patientId &&
+                order.patientId._id === window.currentPatient._id
+        );
+
+        console.log("Patient lab orders:", patientOrders);
+
+        return patientOrders;
+
+    } catch (error) {
+        console.error("Lab report backend error:", error);
+        return [];
+    }
+}
+
+        /* Modal Logic for Reports/Prescriptions */
+        async function openModal(type, reportId = null)  {
+    const modal = document.getElementById('documentModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalDoc = document.getElementById('modalDocument');
+    if (type === 'prescription') {
+
+    // Get all prescriptions from MongoDB
+    const prescriptions = await getPatientPrescriptions();
+
+    if (prescriptions.length === 0) {
+        showMessage('No prescription found', 'error');
+        return;
+    }
+
+    const patient = window.currentPatient;
+
+    modalTitle.innerText = "Prescriptions";
+
+    modalDoc.innerHTML = `
+        <div class="p-6 sm:p-8 font-sans text-slate-800">
+
+            <div class="flex justify-between items-start border-b-2 border-primary-600 pb-4 mb-5">
+
+                <div class="flex items-center gap-3">
+
+                    <div class="w-11 h-11 bg-primary-600 rounded-lg flex items-center justify-center text-white">
+                        <i class="fas fa-brain"></i>
+                    </div>
+
+                    <div>
+                        <p class="font-bold text-lg leading-tight">
+                            NextWave Health
+                        </p>
+
+                        <p class="text-xs text-slate-500">
+                            City General Hospital, Pune, MH
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="text-right">
+
+                    <p class="text-xs font-bold uppercase tracking-wide text-primary-600">
+                        Prescriptions
+                    </p>
+
+                    <p class="text-xs text-slate-500">
+                        ${prescriptions.length} prescription${prescriptions.length > 1 ? 's' : ''}
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="grid grid-cols-2 gap-3 text-sm mb-5">
+
+                <div>
+                    <p class="text-[11px] font-bold text-slate-400 uppercase">
+                        Patient
+                    </p>
+
+                    <p class="font-semibold">
+                        ${patient.name} · ${patient.age} Yrs, ${patient.gender}
+                    </p>
+                </div>
+
+
+                <div>
+                    <p class="text-[11px] font-bold text-slate-400 uppercase">
+                        ABHA ID
+                    </p>
+
+                    <p class="font-semibold">
+                        ${patient.abhaId}
+                    </p>
+                </div>
+
+            </div>
+
+
+            ${prescriptions.map((prescription, index) => `
+
+                <div class="mb-6">
+
+                    <div class="flex justify-between items-center mb-2">
+
+                        <p class="text-[11px] font-bold text-slate-400 uppercase">
+                            Prescription ${index + 1}
+                        </p>
+
+                        <p class="text-xs text-slate-500">
+                            Status: ${prescription.status}
+                        </p>
+
+                    </div>
+
+
+                    <div class="grid grid-cols-2 gap-3 text-sm mb-3">
+
+                        <div>
+
+                            <p class="text-[11px] font-bold text-slate-400 uppercase">
+                                Date
+                            </p>
+
+                            <p class="font-semibold">
+                                ${new Date(prescription.date).toLocaleDateString()}
+                            </p>
+
+                        </div>
+
+
+                        <div>
+
+                            <p class="text-[11px] font-bold text-slate-400 uppercase">
+                                Consulting Physician
+                            </p>
+
+                            <p class="font-semibold">
+                                ${prescription.doctorName}
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div>
+
+                        <p class="text-[11px] font-bold text-slate-400 uppercase mb-1">
+                            Medication
+                        </p>
+
+
+                        <table class="w-full text-sm border border-slate-200 rounded overflow-hidden">
+
+                            <thead class="bg-slate-50 text-slate-500 text-xs uppercase">
+
+                                <tr>
+
+                                    <th class="text-left px-3 py-2">
+                                        Medicine
+                                    </th>
+
+                                    <th class="text-left px-3 py-2">
+                                        Dosage
+                                    </th>
+
+                                    <th class="text-left px-3 py-2">
+                                        Instructions
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+
+                            <tbody class="divide-y divide-slate-100">
+
+                                <tr>
+
+                                    <td class="px-3 py-2 font-medium">
+                                        ${prescription.medicine}
+                                    </td>
+
+                                    <td class="px-3 py-2">
+                                        ${prescription.dosage}
+                                    </td>
+
+                                    <td class="px-3 py-2">
+                                        ${prescription.instructions || "As directed"}
+                                    </td>
+
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+
+                    <div class="mt-3">
+
+                        <p class="text-[11px] font-bold text-slate-400 uppercase mb-1">
+                            Advice
+                        </p>
+
+                        <p class="text-sm">
+                            Please follow the prescribed dosage and instructions.
+                        </p>
+
+                    </div>
+
+
+                    <div class="flex justify-between items-end pt-4 mt-4 border-t border-dashed border-slate-300">
+
+                        <p class="text-[11px] text-slate-400">
+                            This is a digitally generated prescription issued via NextWave.
+                        </p>
+
+                        <div class="text-right">
+
+                            <p class="font-serif italic text-lg text-primary-700">
+                                ${prescription.doctorName}
+                            </p>
+
+                            <p class="text-[11px] text-slate-400">
+                                NextWave Healthcare
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            `).join('')}
+
+        </div>
+    `;}
+
+    else if (type === 'report') {
+
+    const labOrders = await getPatientLabOrders();
+
+    if (labOrders.length === 0) {
+        showMessage('No lab report found', 'error');
+        return;
+    }
+
+    /*
+     * If there are multiple reports and no report was selected,
+     * show a simple report selection inside the existing modal.
+     */
+    if (!reportId && labOrders.length > 1) {
+
+        modalTitle.innerText = "Available CBC Lab Reports";
+
+        modalDoc.innerHTML = `
+            <div class="p-6 sm:p-8 font-sans text-slate-800">
+
+                <div class="flex items-center gap-3 border-b-2 border-medical pb-4 mb-5">
+
+                    <div class="w-11 h-11 bg-medical rounded-lg flex items-center justify-center text-white">
+                        <i class="fas fa-flask"></i>
+                    </div>
+
+                    <div>
+                        <p class="font-bold text-lg leading-tight">
+                            Rural Diagnostics Pune
+                        </p>
+
+                        <p class="text-xs text-slate-500">
+                            Select a laboratory report to view
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="space-y-3">
+
+                    ${labOrders.map((report, index) => `
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex justify-between items-center gap-3">
+
+                            <div>
+
+                                <p class="font-bold text-slate-800">
+                                    ${report.testName}
+                                </p>
+
+                                <p class="text-xs text-slate-500 mt-1">
+                                    Referred by ${report.doctorName}
+                                </p>
+
+                                <p class="text-xs text-slate-500">
+                                    ${new Date(report.date).toLocaleString()}
+                                </p>
+
+                            </div>
+
+                            <button
+                                onclick="openModal('report', '${report._id}')"
+                                class="flex-shrink-0 px-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-700 hover:bg-slate-100 transition">
+
+                                <i class="fas fa-eye mr-1"></i>
+                                View Report
+
+                            </button>
+
+                        </div>
+                    `).join('')}
+
+                </div>
+
+            </div>
+        `;
+
+    } else {
+
+        /*
+         * If a specific report was selected,
+         * display that report using the existing report design.
+         */
+
+        const report = reportId
+    ? labOrders.find(report => report._id === reportId)
+    : labOrders.sort(
+        (a, b) => new Date(b.date) - new Date(a.date)
+      )[0];
+
+        if (!report) {
+            showMessage('Selected lab report not found', 'error');
+            return;
+        }
+
+        const patient = window.currentPatient;
+
+        modalTitle.innerText = "CBC Lab Report";
+
+        modalDoc.innerHTML = `
+            <div class="p-6 sm:p-8 font-sans text-slate-800">
+
+                <div class="flex justify-between items-start border-b-2 border-medical pb-4 mb-5">
+
+                    <div class="flex items-center gap-3">
+
+                        <div class="w-11 h-11 bg-medical rounded-lg flex items-center justify-center text-white">
+                            <i class="fas fa-flask"></i>
+                        </div>
+
+                        <div>
+
+                            <p class="font-bold text-lg leading-tight">
+                                Rural Diagnostics Pune
+                            </p>
+
+                            <p class="text-xs text-slate-500">
+                                NABL Accredited Laboratory
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <div class="text-right">
+
+                        <p class="text-xs font-bold uppercase tracking-wide text-medical-dark">
+                            Laboratory Report
+                        </p>
+
+                        <p class="text-xs text-slate-500">
+                            Report No: RD-${report._id.slice(-8)}
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="grid grid-cols-2 gap-3 text-sm mb-5">
+
+                    <div>
+
+                        <p class="text-[11px] font-bold text-slate-400 uppercase">
+                            Patient
+                        </p>
+
+                        <p class="font-semibold">
+                            ${patient.name} · ${patient.age} Yrs, ${patient.gender}
+                        </p>
+
+                    </div>
+
+
+                    <div>
+
+                        <p class="text-[11px] font-bold text-slate-400 uppercase">
+                            ABHA ID
+                        </p>
+
+                        <p class="font-semibold">
+                            ${patient.abhaId}
+                        </p>
+
+                    </div>
+
+
+                    <div>
+
+                        <p class="text-[11px] font-bold text-slate-400 uppercase">
+                            Collected On
+                        </p>
+
+                        <p class="font-semibold">
+                            ${new Date(report.date).toLocaleString()}
+                        </p>
+
+                    </div>
+
+
+                    <div>
+
+                        <p class="text-[11px] font-bold text-slate-400 uppercase">
+                            Referred By
+                        </p>
+
+                        <p class="font-semibold">
+                            ${report.doctorName}
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="mb-2">
+
+                    <p class="text-[11px] font-bold text-slate-400 uppercase mb-2">
+                        ${report.testName}
+                    </p>
+
+
+                    <table class="w-full text-sm border border-slate-200 rounded overflow-hidden">
+
+                        <thead class="bg-slate-50 text-slate-500 text-xs uppercase">
+
+                            <tr>
+
+                                <th class="text-left px-3 py-2">
+                                    Test
+                                </th>
+
+                                <th class="text-left px-3 py-2">
+                                    Result
+                                </th>
+
+                                <th class="text-left px-3 py-2">
+                                    Reference Range
+                                </th>
+
+                                <th class="text-left px-3 py-2">
+                                    Status
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody class="divide-y divide-slate-100">
+
+                            <tr>
+
+                                <td class="px-3 py-2 font-medium">
+                                    Hemoglobin
+                                </td>
+
+                                <td class="px-3 py-2">
+                                    14.2 g/dL
+                                </td>
+
+                                <td class="px-3 py-2">
+                                    13.0 - 17.0 g/dL
+                                </td>
+
+                                <td class="px-3 py-2">
+
+                                    <span class="text-emerald-600 font-semibold">
+                                        Normal
+                                    </span>
+
+                                </td>
+
+                            </tr>
+
+
+                            <tr>
+
+                                <td class="px-3 py-2 font-medium">
+                                    Platelet Count
+                                </td>
+
+                                <td class="px-3 py-2">
+                                    2.5 lakh/µL
+                                </td>
+
+                                <td class="px-3 py-2">
+                                    1.5 - 4.5 lakh/µL
+                                </td>
+
+                                <td class="px-3 py-2">
+
+                                    <span class="text-emerald-600 font-semibold">
+                                        Normal
+                                    </span>
+
+                                </td>
+
+                            </tr>
+
+
+                            <tr>
+
+                                <td class="px-3 py-2 font-medium">
+                                    WBC Count
+                                </td>
+
+                                <td class="px-3 py-2">
+                                    7,200 /µL
+                                </td>
+
+                                <td class="px-3 py-2">
+                                    4,000 - 11,000 /µL
+                                </td>
+
+                                <td class="px-3 py-2">
+
+                                    <span class="text-emerald-600 font-semibold">
+                                        Normal
+                                    </span>
+
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+
+                <div class="mt-4 mb-8">
+
+                    <p class="text-[11px] font-bold text-slate-400 uppercase mb-1">
+                        Impression
+                    </p>
+
+                    <p class="text-sm">
+                        ${report.result || 'All parameters are within normal limits. No further action required.'}
+                    </p>
+
+                </div>
+
+
+                <div class="flex justify-between items-end pt-4 border-t border-dashed border-slate-300">
+
+                    <p class="text-[11px] text-slate-400">
+                        This is a digitally generated report issued via NextWave.
+                    </p>
+
+                    <div class="text-right">
+
+                        <p class="font-serif italic text-lg text-medical-dark">
+                            ${report.doctorName}
+                        </p>
+
+                        <p class="text-[11px] text-slate-400">
+                            Lab In-charge, DMLT
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+        `;
+    }
+}
+
+    modal.classList.remove('hidden');
+}
+
+        function closeModal() {
+            document.getElementById('documentModal').classList.add('hidden');
+        }
+
+        /* Translation Dictionary & Engine */
+        const i18n = {
+            en: {
+                hero_desc: "One secure account. Complete health history. Connected care.",
+                login_title: "Patient Login",
+                login_label: "ABHA ID",
+                get_otp: "Get OTP",
+                verify_login: "Verify & Login",
+                logout: "Logout",
+                age_sex: "Age & Sex",
+                phone: "Phone",
+                address: "Address",
+                services: "Healthcare Services",
+                med_history: "Medical History",
+                find_hospitals: "Find Hospitals",
+                find_pharmacies: "Find Pharmacies",
+                back_btn: "Back to Dashboard",
+                
+                // New Expanded Strings
+                search_hospital: "Search by hospital name or location...",
+                search_pharmacy: "Search by medicine or pharmacy name...",
+                med_record_1_title: "General Checkup & Viral Fever",
+                med_record_1_desc: "Patient exhibited high temperature and body ache. Prescribed antipyretics and rest for 3 days.",
+                med_record_1_dr: "Consulted: Dr. Amit Sharma (City Hospital)",
+                btn_prescription: "Prescription",
+                med_record_2_title: "Complete Blood Count (CBC)",
+                med_record_2_desc: "Routine blood work to check hemoglobin and platelet count. All parameters within normal limits.",
+                med_record_2_lab: "Lab: Rural Diagnostics Pune",
+                btn_report: "View Report",
+                hospital_1_name: "City General PHC",
+                hospital_1_addr: "14 Mahatma Gandhi Road, Pune",
+                dr_smith: "Dr. Smith (Cardiology):",
+                dr_smith_avail: "Available Now (Token 12)",
+                dr_joshi: "Dr. Joshi (General):",
+                dr_joshi_avail: "Available at 2:00 PM",
+                book_slot: "Book Slot",
+                hospital_2_name: "Rural Care Clinic",
+                hospital_2_addr: "East Sector, Outskirts, Pune",
+                dr_patel: "Dr. Patel (Pediatrics):",
+                dr_patel_avail: "Available Now (Token 4)",
+                pharm_1_name: "Govt. Dispensary Hub",
+                pharm_1_addr: "Main Square, Pune",
+                stock_status: "Stock Status:",
+                para_stock: "Paracetamol: In Stock",
+                amox_stock: "Amoxicillin: In Stock",
+                pharm_2_name: "Sanjeevani Medico (PHC)",
+                pharm_2_addr: "Rural Link Road, Pune",
+                ins_stock: "Insulin: Low Stock",
+                asp_stock: "Aspirin: In Stock"
+            },
+            hi: {
+                hero_desc: "एक सुरक्षित खाता। पूरा स्वास्थ्य इतिहास। बेहतर देखभाल।",
+                login_title: "मरीज लॉगिन",
+                login_label: "आभा आईडी",
+                get_otp: "OTP प्राप्त करें",
+                verify_login: "सत्यापित करें और लॉगिन करें",
+                logout: "लॉग आउट",
+                age_sex: "आयु और लिंग",
+                phone: "फोन",
+                address: "पता",
+                services: "स्वास्थ्य सेवाएँ",
+                med_history: "चिकित्सा इतिहास",
+                find_hospitals: "अस्पताल खोजें",
+                find_pharmacies: "फार्मेसी खोजें",
+                back_btn: "डैशबोर्ड पर वापस जाएं",
+
+                // New Expanded Strings
+                search_hospital: "अस्पताल का नाम या स्थान खोजें...",
+                search_pharmacy: "दवा या फार्मेसी का नाम खोजें...",
+                med_record_1_title: "सामान्य जांच और वायरल बुखार",
+                med_record_1_desc: "मरीज में उच्च तापमान और शरीर में दर्द देखा गया। 3 दिनों के लिए एंटीपायरेटिक्स और आराम की सलाह दी गई।",
+                med_record_1_dr: "परामर्श: डॉ. अमित शर्मा (सिटी अस्पताल)",
+                btn_prescription: "प्रिस्क्रिप्शन",
+                med_record_2_title: "कम्प्लीट ब्लड काउंट (CBC)",
+                med_record_2_desc: "हीमोग्लोबिन और प्लेटलेट काउंट की जांच के लिए नियमित रक्त परीक्षण। सभी पैरामीटर सामान्य सीमा के भीतर हैं।",
+                med_record_2_lab: "लैब: रूरल डायग्नोस्टिक्स पुणे",
+                btn_report: "रिपोर्ट देखें",
+                hospital_1_name: "सिटी जनरल पीएचसी",
+                hospital_1_addr: "14 महात्मा गांधी रोड, पुणे",
+                dr_smith: "डॉ. स्मिथ (कार्डियोलॉजी):",
+                dr_smith_avail: "अभी उपलब्ध (टोकन 12)",
+                dr_joshi: "डॉ. जोशी (सामान्य):",
+                dr_joshi_avail: "दोपहर 2:00 बजे उपलब्ध",
+                book_slot: "स्लॉट बुक करें",
+                hospital_2_name: "रूरल केयर क्लिनिक",
+                hospital_2_addr: "ईस्ट सेक्टर, बाहरी इलाके, पुणे",
+                dr_patel: "डॉ. पटेल (बाल रोग):",
+                dr_patel_avail: "अभी उपलब्ध (टोकन 4)",
+                pharm_1_name: "सरकारी औषधालय हब",
+                pharm_1_addr: "मेन स्क्वायर, पुणे",
+                stock_status: "स्टॉक की स्थिति:",
+                para_stock: "पैरासिटामोल: स्टॉक में है",
+                amox_stock: "एमोक्सिसिलिन: स्टॉक में है",
+                pharm_2_name: "संजीवनी मेडिको (पीएचसी)",
+                pharm_2_addr: "रूरल लिंक रोड, पुणे",
+                ins_stock: "इंसुलिन: कम स्टॉक",
+                asp_stock: "एस्पिरिन: स्टॉक में है"
+            },
+            mr: {
+                hero_desc: "एक सुरक्षित खाते. संपूर्ण आरोग्य इतिहास. कनेक्टेड केअर.",
+                login_title: "रुग्ण लॉगिन",
+                login_label: "आभा आयडी",
+                get_otp: "OTP मिळवा",
+                verify_login: "पडताळणी करा आणि लॉगिन करा",
+                logout: "बाहेर पडा",
+                age_sex: "वय आणि लिंग",
+                phone: "फोन",
+                address: "पत्ता",
+                services: "आरोग्य सेवा",
+                med_history: "वैद्यकीय इतिहास",
+                find_hospitals: "रुग्णालय शोधा",
+                find_pharmacies: "फार्मसी शोधा",
+                back_btn: "डॅशबोर्डवर परत जा",
+
+                // New Expanded Strings
+                search_hospital: "रुग्णालयाचे नाव किंवा ठिकाण शोधा...",
+                search_pharmacy: "औषध किंवा फार्मसीचे नाव शोधा...",
+                med_record_1_title: "सामान्य तपासणी आणि व्हायरल ताप",
+                med_record_1_desc: "रुग्णाला उच्च तापमान आणि अंगदुखी होती. ३ दिवसांसाठी अँटीपायरेटिक्स आणि विश्रांतीचा सल्ला दिला.",
+                med_record_1_dr: "सल्लागार: डॉ. अमित शर्मा (सिटी हॉस्पिटल)",
+                btn_prescription: "प्रिस्क्रिप्शन",
+                med_record_2_title: "कम्प्लीट ब्लड काउंट (CBC)",
+                med_record_2_desc: "हेमोग्लोबिन आणि प्लेटलेट काउंट तपासण्यासाठी नियमित रक्त चाचणी. सर्व मापदंड सामान्य मर्यादेत आहेत.",
+                med_record_2_lab: "प्रयोगशाळा: रुरल डायग्नोस्टिक्स पुणे",
+                btn_report: "रिपोर्ट पहा",
+                hospital_1_name: "सिटी जनरल पीएचसी",
+                hospital_1_addr: "१४ महात्मा गांधी रोड, पुणे",
+                dr_smith: "डॉ. स्मिथ (कार्डिओलॉजी):",
+                dr_smith_avail: "आता उपलब्ध (टोकन १२)",
+                dr_joshi: "डॉ. जोशी (सामान्य):",
+                dr_joshi_avail: "दुपारी २:०० वाजता उपलब्ध",
+                book_slot: "स्लॉट बुक करा",
+                hospital_2_name: "रुरल केअर क्लिनिक",
+                hospital_2_addr: "ईस्ट सेक्टर, बाहेरील भाग, पुणे",
+                dr_patel: "डॉ. पटेल (बालरोग):",
+                dr_patel_avail: "आता उपलब्ध (टोकन ४)",
+                pharm_1_name: "सरकारी दवाखाना हब",
+                pharm_1_addr: "मेन स्क्वेअर, पुणे",
+                stock_status: "स्टॉक स्थिती:",
+                para_stock: "पॅरासिटामॉल: स्टॉकमध्ये आहे",
+                amox_stock: "अमोक्सिसिलिन: स्टॉकमध्ये आहे",
+                pharm_2_name: "संजीवनी मेडिको (पीएचसी)",
+                pharm_2_addr: "रुरल लिंक रोड, पुणे",
+                ins_stock: "इन्सुलिन: कमी स्टॉक",
+                asp_stock: "ऍस्पिरिन: स्टॉकमध्ये आहे"
+            }
+        };
+
+        function changeLanguage(langCode) {
+            // Translate static text elements
+            const elements = document.querySelectorAll('[data-i18n]');
+            elements.forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (i18n[langCode] && i18n[langCode][key]) {
+                    el.innerText = i18n[langCode][key];
+                }
+            });
+
+            // Translate placeholders dynamically
+            const placeholders = document.querySelectorAll('[data-i18n-placeholder]');
+            placeholders.forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                if (i18n[langCode] && i18n[langCode][key]) {
+                    el.setAttribute('placeholder', i18n[langCode][key]);
+                }
+            });
+        }
+    </script>
+</body>
+</html>

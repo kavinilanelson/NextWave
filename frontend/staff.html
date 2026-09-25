@@ -1,0 +1,2537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NextWave | Medical Professional & PHC Staff Portal</title>
+    
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8'
+                        },
+                        medical: {
+                            light: '#d1fae5',
+                            DEFAULT: '#10b981',
+                            dark: '#047857'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.35s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+
+            #printSection,
+            #printSection * {
+                visibility: visible;
+            }
+
+            #printSection {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-slate-50 font-sans text-slate-800 antialiased min-h-screen flex flex-col">
+
+    <!-- Navigation -->
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+
+                <div class="flex items-center cursor-pointer" onclick="location.reload()">
+                    <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white mr-3 shadow-md shadow-blue-500/20">
+                        <i class="fas fa-user-md text-lg"></i>
+                    </div>
+
+                    <div>
+                        <span class="font-bold text-xl tracking-tight text-slate-900">
+                            Next<span class="text-blue-600">Wave</span> Staff
+                        </span>
+
+                        <span class="block text-[10px] text-slate-400 font-semibold uppercase tracking-wider"
+                              data-i18n="tagline">
+                            Rural PHC Medical Professional Network
+                        </span>
+                    </div>
+                </div>
+
+                <div class="flex items-center space-x-4">
+
+                    <!-- Language Selector -->
+                    <div class="relative">
+                        <select id="langSelector"
+                                onchange="changeLanguage(this.value)"
+                                class="pl-3 pr-8 py-2 text-sm border border-slate-300 rounded-lg bg-slate-50 text-slate-700 font-medium cursor-pointer appearance-none outline-none focus:border-blue-500">
+
+                            <option value="en">🌐 English</option>
+                            <option value="mr">🌐 मराठी (Marathi)</option>
+                            <option value="hi">🌐 हिंदी (Hindi)</option>
+
+                        </select>
+
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-500">
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </div>
+                    </div>
+
+                    <button id="logoutBtn"
+                            class="hidden text-sm font-medium text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 px-4 py-2 rounded-lg transition-colors"
+                            onclick="location.reload()">
+
+                        <i class="fas fa-sign-out-alt mr-2"></i>
+                        <span data-i18n="logout">Logout</span>
+
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Staff Login View -->
+    <div id="staffLoginView" class="flex-grow flex flex-col justify-center py-12 view-section">
+
+        <main class="max-w-md mx-auto px-4 w-full fade-in">
+
+            <div class="bg-white rounded-3xl shadow-xl border border-slate-100 p-8">
+
+                <div class="text-center mb-6">
+
+                    <span class="text-xs font-bold text-blue-700 bg-blue-50 px-3 py-1 rounded-full uppercase tracking-wider"
+                          data-i18n="staff_badge">
+                        SIH26133 • Staff Portal
+                    </span>
+
+                    <h2 class="text-2xl font-extrabold text-slate-900 mt-3"
+                        data-i18n="login_title">
+                        Professional Login
+                    </h2>
+
+                    <p class="text-sm text-slate-500 mt-1"
+                       data-i18n="login_subtitle">
+                        Secure role-scoped access for PHC practitioners
+                    </p>
+
+                </div>
+
+                <div class="space-y-4">
+
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1.5"
+                               data-i18n="role_select">
+                            Select Medical Role
+                        </label>
+
+                        <select id="staffRole"
+                                onchange="updateRoleCredentials()"
+                                class="w-full px-3 py-3 border border-slate-300 rounded-xl outline-none focus:border-blue-500 bg-white font-medium text-slate-700">
+
+                            <option value="doctor" data-i18n="role_doctor">
+                                Doctor / Medical Officer
+                            </option>
+
+                            <option value="pharmacist" data-i18n="role_pharmacist">
+                                PHC Pharmacist
+                            </option>
+
+                            <option value="lab" data-i18n="role_lab">
+                                Lab Technician
+                            </option>
+
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1.5"
+                               data-i18n="staff_id">
+                            Staff ID / Medical Reg No.
+                        </label>
+
+                        <div class="relative">
+                            <i class="fas fa-id-badge text-slate-400 absolute left-3.5 top-3.5"></i>
+
+                            <input type="text"
+                                   id="staffId"
+                                   class="w-full pl-10 pr-3 py-3 border border-slate-300 rounded-xl outline-none focus:border-blue-500 font-medium"
+                                   value="DR-MH-4012">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1.5"
+                               data-i18n="access_pin">
+                            Secure PIN / Password
+                        </label>
+
+                        <div class="relative">
+
+                            <i class="fas fa-lock text-slate-400 absolute left-3.5 top-3.5"></i>
+
+                            <input type="password"
+                                   id="staffPin"
+                                   class="w-full pl-10 pr-3 py-3 border border-slate-300 rounded-xl outline-none focus:border-blue-500 font-medium"
+                                   value="DocSecure#2026">
+
+                        </div>
+                    </div>
+
+                    <button id="staffLoginBtn"
+                            onclick="processStaffLogin()"
+                            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3.5 rounded-xl transition shadow-lg shadow-blue-500/20 mt-2"
+                            data-i18n="login_secure">
+
+                        Authenticate & Enter
+
+                    </button>
+
+                    <div class="bg-blue-50/50 rounded-2xl p-4 border border-blue-100 mt-4 text-xs text-blue-800 space-y-1">
+
+                        <p class="font-bold">
+                            <i class="fas fa-info-circle mr-1"></i>
+                            Role Credentials Notice:
+                        </p>
+
+                        <p>
+                            <strong>Doctor:</strong> DR-MH-4012 (Pass: DocSecure#2026)<br>
+                            <strong>Pharmacist:</strong> PH-MH-7734 (Pass: PharmStock@99)<br>
+                            <strong>Lab Technician:</strong> LB-MH-2289 (Pass: LabDiag#554)
+                        </p>
+
+                    </div>
+
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Staff Dashboard View -->
+    <div id="staffDashboardView" class="hidden flex-grow flex-col view-section">
+
+        <main class="max-w-6xl mx-auto px-4 py-8 w-full space-y-8 fade-in">
+
+            <!-- Staff Profile Banner -->
+            <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-6 md:p-8 flex flex-col md:flex-row justify-between items-center gap-6">
+
+                <div class="flex items-center gap-4 text-center md:text-left flex-col md:flex-row">
+
+                    <div class="w-16 h-16 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-2xl font-bold shadow-inner">
+                        <i class="fas fa-user-md" id="roleIconHeader"></i>
+                    </div>
+
+                    <div>
+
+                        <h1 class="text-2xl font-bold text-slate-900"
+                            id="staffWelcomeTitle">
+                            Dr. Amit Sharma
+                        </h1>
+
+                        <p class="text-xs text-blue-600 font-semibold uppercase tracking-wider mt-0.5">
+
+                            <span id="staffRoleDisplay">
+                                Doctor / Medical Officer
+                            </span>
+
+                            •
+
+                            <span class="text-slate-500">
+                                PHC Pune Rural Hub
+                            </span>
+
+                        </p>
+
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+
+                    <div class="bg-emerald-50 text-emerald-700 text-xs font-bold px-3 py-1.5 rounded-xl border border-emerald-200 inline-flex items-center gap-1.5">
+
+                        <i class="fas fa-circle text-[8px] animate-pulse"></i>
+
+                        <span data-i18n="connected_abha">
+                            Connected to ABHA Gateway
+                        </span>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Quick Metrics Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 flex items-center gap-4">
+
+                    <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl font-bold">
+                        <i class="fas fa-users"></i>
+                    </div>
+
+                    <div>
+
+                        <p class="text-xs font-bold text-slate-400 uppercase"
+                           data-i18n="stat_consultations">
+                            Today's Queue
+                        </p>
+
+                        <h4 class="text-2xl font-black text-slate-800 mt-0.5"
+                            id="statQueueCount">
+                            14 Patients
+                        </h4>
+
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 flex items-center gap-4">
+
+                    <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl font-bold">
+                        <i class="fas fa-shield-check"></i>
+                    </div>
+
+                    <div>
+
+                        <p class="text-xs font-bold text-slate-400 uppercase"
+                           data-i18n="stat_consents">
+                            Verified Security
+                        </p>
+
+                        <h4 class="text-2xl font-black text-slate-800 mt-0.5">
+                            Role Encrypted
+                        </h4>
+
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 flex items-center gap-4">
+
+                    <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl font-bold">
+                        <i class="fas fa-network-wired"></i>
+                    </div>
+
+                    <div>
+
+                        <p class="text-xs font-bold text-slate-400 uppercase">
+                            Gateway Sync
+                        </p>
+
+                        <h4 class="text-2xl font-black text-slate-800 mt-0.5">
+                            Active 100%
+                        </h4>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Core Action Cards -->
+            <div class="grid grid-cols-1 gap-8">
+
+                <!-- Doctor Card -->
+                <div id="doctorPatientCard"
+                     class="bg-white rounded-3xl shadow-sm border border-slate-200 p-8 flex flex-col justify-between">
+
+                    <div>
+
+                        <div class="flex items-center gap-3 mb-4">
+
+                            <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-lg font-bold">
+                                <i class="fas fa-id-card"></i>
+                            </div>
+
+                            <h3 class="text-xl font-bold text-slate-900"
+                                data-i18n="request_access_title">
+                                Request Patient Records (ABHA ID)
+                            </h3>
+
+                        </div>
+
+                        <p class="text-sm text-slate-500 mb-6"
+                           data-i18n="request_access_desc">
+                            Enter the patient's unique ABHA ID to request clinical history and past medical reports. A secure OTP consent notification will be dispatched instantly.
+                        </p>
+
+                        <div class="space-y-4">
+
+                            <div>
+
+                                <label class="block text-sm font-semibold text-slate-700 mb-2"
+                                       data-i18n="patient_abha_label">
+                                    Patient ABHA ID
+                                </label>
+
+                                <input type="text"
+                                       id="targetAbhaId"
+                                       class="w-full px-4 py-3 border border-slate-300 rounded-xl outline-none focus:border-blue-500 font-medium text-slate-800"
+                                       value="91-4432-8871-0021">
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="mt-8">
+
+                        <button id="requestConsentBtn"
+                                onclick="requestPatientConsent()"
+                                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3.5 rounded-xl transition shadow-lg shadow-blue-500/20"
+                                data-i18n="btn_request">
+
+                            Request Secure Access
+
+                        </button>
+
+                        <div id="consentStatus" class="hidden mt-4"></div>
+
+                    </div>
+
+                </div>
+
+                <!-- Pharmacist & Lab Card -->
+                <div id="staffRoleSpecificCard"
+                     class="hidden bg-white rounded-3xl shadow-sm border border-slate-200 p-8 space-y-6">
+
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-100 pb-4">
+
+                        <div class="flex items-center gap-3">
+
+                            <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-lg font-bold">
+
+                                <i class="fas fa-tasks" id="roleCardIcon"></i>
+
+                            </div>
+
+                            <div>
+
+                                <h3 class="text-xl font-bold text-slate-900"
+                                    id="roleCardTitle">
+                                    Departmental Queue
+                                </h3>
+
+                                <p class="text-xs text-slate-500 mt-0.5"
+                                   id="roleCardDesc">
+                                    Manage workflows and fulfillment status.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <button onclick="refreshDepartmentQueue()"
+                                class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+
+                            <i class="fas fa-sync-alt"></i>
+                            Refresh Live Queue
+
+                        </button>
+
+                    </div>
+
+                    <div id="departmentQueueContainer" class="space-y-4"></div>
+
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Doctor Patient Record View -->
+    <div id="proPatientRecordView"
+         class="hidden flex-grow flex-col view-section">
+
+        <main class="max-w-4xl mx-auto px-4 py-8 w-full space-y-6 fade-in">
+
+            <div class="flex items-center justify-between">
+
+                <button onclick="switchView('staffDashboardView')"
+                        class="text-slate-500 hover:text-blue-600 font-medium flex items-center text-sm">
+
+                    <i class="fas fa-arrow-left mr-2"></i>
+
+                    <span data-i18n="back_to_dashboard">
+                        Back to Staff Dashboard
+                    </span>
+
+                </button>
+
+                <span class="bg-blue-50 text-blue-700 text-xs font-bold px-3 py-1 rounded-full border border-blue-200 inline-flex items-center gap-1.5">
+
+                    <i class="fas fa-lock"></i>
+
+                    <span data-i18n="consent_active">
+                        Active Consent Session Verified
+                    </span>
+
+                </span>
+
+            </div>
+
+            <!-- Patient Header -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+
+                <div class="flex items-center gap-4">
+
+                    <div class="w-16 h-16 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-2xl shadow">
+                        RK
+                    </div>
+
+                    <div>
+
+                        <h2 class="text-xl font-bold text-slate-900">
+                            Ramesh Kumar
+                            <span class="text-sm font-normal text-slate-500">
+                                (45 Yrs, Male)
+                            </span>
+                        </h2>
+
+                        <p class="text-xs text-blue-600 font-semibold mt-0.5">
+
+                            <i class="fas fa-id-card"></i>
+
+                            ABHA: 91-4432-8871-0021
+
+                            •
+
+                            <span class="text-red-600 font-bold">
+                                Blood Group: O+
+                            </span>
+
+                        </p>
+
+                    </div>
+                </div>
+
+                <div class="flex gap-2">
+
+                    <button onclick="openPrescriptionModal()"
+                            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-sm font-semibold transition shadow-md shadow-blue-500/20">
+
+                        <i class="fas fa-file-prescription mr-1.5"></i>
+                        Issue E-Prescription
+
+                    </button>
+
+                </div>
+
+            </div>
+
+            <!-- Clinical History -->
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-6">
+
+                <div class="border-b border-slate-100 pb-4 flex justify-between items-center">
+
+                    <div>
+
+                        <h3 class="font-bold text-lg text-slate-800"
+                            data-i18n="past_records">
+                            Past Medical Records & Clinical Notes
+                        </h3>
+
+                        <p class="text-xs text-slate-400 mt-0.5">
+                            Role-scoped data authorized securely by patient consent.
+                        </p>
+
+                    </div>
+
+                    <button onclick="openLabOrderModal()"
+                            class="px-3 py-2 bg-purple-50 text-purple-700 border border-purple-200 rounded-xl text-xs font-bold hover:bg-purple-100 transition">
+
+                        <i class="fas fa-flask mr-1"></i>
+                        Order Lab Test
+
+                    </button>
+
+                </div>
+
+                <div class="space-y-4" id="doctorPatientHistoryList">
+
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+
+                        <div class="flex justify-between items-start mb-2">
+
+                            <span class="text-xs font-bold bg-blue-100 text-blue-700 px-2.5 py-0.5 rounded">
+                                Sep 15, 2026
+                            </span>
+
+                            <span class="text-xs text-slate-500 font-semibold">
+                                Dr. Amit Sharma (City PHC)
+                            </span>
+
+                        </div>
+
+                        <h4 class="font-bold text-slate-800">
+                            Viral Fever & Body Ache
+                        </h4>
+
+                        <p class="text-xs font-semibold text-slate-500 mt-0.5">
+                            Diagnosis: Acute febrile illness with generalized myalgia.
+                        </p>
+
+                        <p class="text-sm text-slate-600 mt-1">
+                            Patient exhibited high temperature (101°F) and fatigue. Prescribed Paracetamol 500mg and advised 3 days rest.
+                        </p>
+
+                    </div>
+
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+
+                        <div class="flex justify-between items-start mb-2">
+
+                            <span class="text-xs font-bold bg-purple-100 text-purple-700 px-2.5 py-0.5 rounded">
+                                Aug 02, 2026
+                            </span>
+
+                            <span class="text-xs text-slate-500 font-semibold">
+                                Rural Diagnostics Pune
+                            </span>
+
+                        </div>
+
+                        <h4 class="font-bold text-slate-800">
+                            Complete Blood Count (CBC)
+                        </h4>
+
+                        <p class="text-xs font-semibold text-slate-500 mt-0.5">
+                            Diagnosis: Normal hematological panel.
+                        </p>
+
+                        <p class="text-sm text-slate-600 mt-1">
+                            Hemoglobin: 14.2 g/dL, Platelets: 250,000/µL. All parameters within normal clinical range.
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="pt-4 border-t border-slate-100">
+
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">
+                        Add New Clinical Notes / Observations
+                    </label>
+
+                    <textarea id="newClinicalNote"
+                              rows="3"
+                              class="w-full p-3 border border-slate-300 rounded-xl outline-none focus:border-blue-500 text-sm font-medium text-slate-800"
+                              placeholder="Enter diagnosis, vital signs, or referral recommendations..."></textarea>
+
+                    <div class="mt-3 text-right">
+
+                        <button onclick="saveClinicalRecord()"
+                                class="px-6 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-sm font-semibold transition">
+
+                            Save Clinical Record
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </main>
+    </div>
+
+    <!-- E-Prescription Modal -->
+    <div id="prescriptionModal"
+         class="hidden fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 fade-in">
+
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-100 space-y-5">
+
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+
+                <h3 class="font-bold text-lg text-slate-900">
+
+                    <i class="fas fa-file-prescription text-blue-600 mr-2"></i>
+                    Issue E-Prescription
+
+                </h3>
+
+                <button onclick="closePrescriptionModal()"
+                        class="text-slate-400 hover:text-slate-600">
+
+                    <i class="fas fa-times text-lg"></i>
+
+                </button>
+
+            </div>
+
+            <div class="space-y-4">
+
+                <div>
+
+                    <label class="block text-xs font-bold text-slate-600 uppercase mb-1">
+                        Select Medicine
+                    </label>
+
+                    <select id="rxMedSelect"
+                            class="w-full p-3 border border-slate-300 rounded-xl font-medium text-sm">
+
+                        <option value="Paracetamol 500mg - 1 tab TDS (3 days)">
+                            Paracetamol 500mg (Analgesic)
+                        </option>
+
+                        <option value="Amoxicillin 500mg - 1 cap TDS (5 days)">
+                            Amoxicillin 500mg (Antibiotic)
+                        </option>
+
+                        <option value="Ibuprofen 400mg - 1 tab BD (3 days)">
+                            Ibuprofen 400mg (NSAID)
+                        </option>
+
+                        <option value="Cetirizine 10mg - 1 tab OD (5 days)">
+                            Cetirizine 10mg (Antihistamine)
+                        </option>
+
+                        <option value="Aspirin 75mg - 1 tab OD (30 days)">
+                            Aspirin 75mg (Antiplatelet)
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div>
+
+                    <label class="block text-xs font-bold text-slate-600 uppercase mb-1">
+                        Dosage & Instructions
+                    </label>
+
+                    <input type="text"
+                           id="rxInstructions"
+                           class="w-full p-3 border border-slate-300 rounded-xl text-sm font-medium"
+                           value="Take after food with warm water">
+
+                </div>
+
+            </div>
+
+            <div class="flex justify-end gap-3 pt-3 border-t border-slate-100">
+
+                <button onclick="closePrescriptionModal()"
+                        class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold text-sm">
+
+                    Cancel
+
+                </button>
+
+                <button onclick="submitEPrescription()"
+                        class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold text-sm shadow-lg shadow-blue-500/20">
+
+                    Send to PHC Pharmacist
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Lab Order Modal -->
+    <div id="labOrderModal"
+         class="hidden fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 fade-in">
+
+        <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-100 space-y-5">
+
+            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+
+                <h3 class="font-bold text-lg text-slate-900">
+
+                    <i class="fas fa-flask text-purple-600 mr-2"></i>
+                    Order Diagnostic Test
+
+                </h3>
+
+                <button onclick="closeLabOrderModal()"
+                        class="text-slate-400 hover:text-slate-600">
+
+                    <i class="fas fa-times text-lg"></i>
+
+                </button>
+
+            </div>
+
+            <div class="space-y-4">
+
+                <div>
+
+                    <label class="block text-xs font-bold text-slate-600 uppercase mb-1">
+                        Select Test
+                    </label>
+
+                    <select id="labTestSelect"
+                            class="w-full p-3 border border-slate-300 rounded-xl font-medium text-sm">
+
+                        <option value="Complete Blood Count (CBC)">
+                            Complete Blood Count (CBC)
+                        </option>
+
+                        <option value="Fasting Blood Sugar (FBS)">
+                            Fasting Blood Sugar (FBS)
+                        </option>
+
+                        <option value="Lipid Profile">
+                            Lipid Profile
+                        </option>
+
+                        <option value="Liver Function Test (LFT)">
+                            Liver Function Test (LFT)
+                        </option>
+
+                        <option value="Serum Creatinine">
+                            Serum Creatinine
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div>
+
+                    <label class="block text-xs font-bold text-slate-600 uppercase mb-1">
+                        Clinical Notes for Lab
+                    </label>
+
+                    <input type="text"
+                           id="labNotes"
+                           class="w-full p-3 border border-slate-300 rounded-xl text-sm font-medium"
+                           value="Routine evaluation / Suspected infection check">
+
+                </div>
+
+            </div>
+
+            <div class="flex justify-end gap-3 pt-3 border-t border-slate-100">
+
+                <button onclick="closeLabOrderModal()"
+                        class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold text-sm">
+
+                    Cancel
+
+                </button>
+
+                <button onclick="submitLabOrder()"
+                        class="px-6 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-semibold text-sm shadow-lg shadow-purple-500/20">
+
+                    Send to Lab Technician
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Lab Result Modal -->
+    <div id="labResultModal"
+         class="hidden fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 fade-in">
+
+        <div class="bg-white rounded-3xl max-w-2xl w-full p-8 shadow-2xl border border-slate-100 space-y-6">
+
+            <div id="printSection" class="space-y-4 bg-white p-2">
+
+                <div class="flex justify-between items-center border-b border-slate-200 pb-4">
+
+                    <div>
+
+                        <h2 class="font-extrabold text-xl text-slate-900">
+                            NextWave Pathology Lab Analysis
+                        </h2>
+
+                        <p class="text-xs text-slate-500">
+                            PHC Rural Diagnostic Center • Accredited NABL
+                        </p>
+
+                    </div>
+
+                    <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full">
+                        Verified Report
+                    </span>
+
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 text-sm bg-slate-50 p-4 rounded-xl border border-slate-200">
+
+                    <div>
+                        <span class="text-slate-500 block text-xs">
+                            Patient Name:
+                        </span>
+                        <strong id="labModalPatient">
+                            Ramesh Kumar (45Y/M)
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span class="text-slate-500 block text-xs">
+                            ABHA ID:
+                        </span>
+                        <strong>
+                            91-4432-8871-0021
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span class="text-slate-500 block text-xs">
+                            Test Ordered:
+                        </span>
+                        <strong id="labModalTestName">
+                            Complete Blood Count (CBC)
+                        </strong>
+                    </div>
+
+                    <div>
+                        <span class="text-slate-500 block text-xs">
+                            Date:
+                        </span>
+                        <strong>
+                            Today, 11:30 AM
+                        </strong>
+                    </div>
+
+                </div>
+
+                <div class="space-y-2 text-sm pt-2">
+
+                    <p class="font-bold text-slate-800 text-xs uppercase tracking-wider">
+                        Hematology Test Parameters:
+                    </p>
+
+                    <div class="overflow-x-auto border border-slate-200 rounded-xl">
+
+                        <table class="w-full text-left text-xs text-slate-700">
+
+                            <thead class="bg-slate-100 border-b border-slate-200 text-slate-600 uppercase">
+
+                                <tr>
+                                    <th class="p-3">Test Parameter</th>
+                                    <th class="p-3">Result</th>
+                                    <th class="p-3">Reference Range</th>
+                                    <th class="p-3">Status</th>
+                                </tr>
+
+                            </thead>
+
+                            <tbody class="divide-y divide-slate-100">
+
+                                <tr>
+                                    <td class="p-3 font-semibold text-slate-900">
+                                        Hemoglobin (Hb)
+                                    </td>
+                                    <td class="p-3 font-bold text-blue-700">
+                                        14.2 g/dL
+                                    </td>
+                                    <td class="p-3 text-slate-500">
+                                        13.0 - 17.0 g/dL
+                                    </td>
+                                    <td class="p-3">
+                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">
+                                            Normal
+                                        </span>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td class="p-3 font-semibold text-slate-900">
+                                        Total WBC Count
+                                    </td>
+                                    <td class="p-3 font-bold text-blue-700">
+                                        7,400 cells/µL
+                                    </td>
+                                    <td class="p-3 text-slate-500">
+                                        4,000 - 11,000 cells/µL
+                                    </td>
+                                    <td class="p-3">
+                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">
+                                            Normal
+                                        </span>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td class="p-3 font-semibold text-slate-900">
+                                        Platelet Count
+                                    </td>
+                                    <td class="p-3 font-bold text-blue-700">
+                                        250,000 /µL
+                                    </td>
+                                    <td class="p-3 text-slate-500">
+                                        150,000 - 450,000 /µL
+                                    </td>
+                                    <td class="p-3">
+                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">
+                                            Normal
+                                        </span>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td class="p-3 font-semibold text-slate-900">
+                                        Erythrocyte Sedimentation Rate (ESR)
+                                    </td>
+                                    <td class="p-3 font-bold text-blue-700">
+                                        18 mm/hr
+                                    </td>
+                                    <td class="p-3 text-slate-500">
+                                        0 - 20 mm/hr
+                                    </td>
+                                    <td class="p-3">
+                                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800">
+                                            Normal
+                                        </span>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 p-3 rounded-xl border border-blue-100 text-xs text-blue-800">
+
+                    <strong>Pathologist Notes:</strong>
+                    All hematological parameters are within normal physiological limits. No acute infection or anemia indicated.
+
+                </div>
+
+            </div>
+
+            <div class="flex justify-end gap-3 pt-4 border-t border-slate-100">
+
+                <button onclick="closeLabModal()"
+                        class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold text-sm">
+
+                    Close
+
+                </button>
+
+                <button onclick="window.print()"
+                        class="px-6 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-semibold text-sm flex items-center gap-2">
+
+                    <i class="fas fa-print"></i>
+                    Print / Export Report
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+
+        /* Shared Application State */
+
+        window.sharedPrescriptions = [
+            {
+                id: 'RX-4902',
+                patient: 'Ramesh Kumar',
+                abha: '91-4432-8871-0021',
+                meds: 'Paracetamol 500mg - 1 tab TDS (3 days)',
+                doctor: 'Dr. Amit Sharma',
+                status: 'Pending Dispense',
+                date: 'Today, 10:30 AM'
+            },
+            {
+                id: 'RX-4903',
+                patient: 'Sunita Patil',
+                abha: '91-8821-3341-9012',
+                meds: 'Amoxicillin Syrup - 5ml BD (5 days)',
+                doctor: 'Dr. Amit Sharma',
+                status: 'Ready',
+                date: 'Today, 09:15 AM'
+            }
+        ];
+
+        window.sharedLabOrders = [
+            {
+                id: 'LAB-881',
+                patient: 'Ramesh Kumar',
+                test: 'Complete Blood Count (CBC)',
+                doctor: 'Dr. Amit Sharma',
+                status: 'Sample Received',
+                date: 'Today, 11:00 AM'
+            },
+            {
+                id: 'LAB-882',
+                patient: 'Rahul More',
+                test: 'Fasting Blood Sugar (FBS)',
+                doctor: 'Dr. Amit Sharma',
+                status: 'Pending Collection',
+                date: 'Today, 08:45 AM'
+            }
+        ];
+
+        window.medicineStockReport = [
+            {
+                name: 'Paracetamol 500mg',
+                category: 'Analgesic / Antipyretic',
+                stock: '450 strips',
+                status: 'Optimal',
+                badge: 'bg-emerald-100 text-emerald-800'
+            },
+            {
+                name: 'Amoxicillin 500mg',
+                category: 'Antibiotic',
+                stock: '120 strips',
+                status: 'Moderate',
+                badge: 'bg-blue-100 text-blue-800'
+            },
+            {
+                name: 'Ibuprofen 400mg',
+                category: 'NSAID',
+                stock: '300 strips',
+                status: 'Optimal',
+                badge: 'bg-emerald-100 text-emerald-800'
+            },
+            {
+                name: 'Cetirizine 10mg',
+                category: 'Antihistamine',
+                stock: '45 strips',
+                status: 'Reorder Soon',
+                badge: 'bg-amber-100 text-amber-800'
+            },
+            {
+                name: 'Aspirin 75mg',
+                category: 'Antiplatelet',
+                stock: '210 strips',
+                status: 'Optimal',
+                badge: 'bg-emerald-100 text-emerald-800'
+            }
+        ];
+
+        /* Role Credential Auto-Fill */
+
+        function updateRoleCredentials() {
+
+            const role = document.getElementById('staffRole').value;
+            const idInput = document.getElementById('staffId');
+            const pinInput = document.getElementById('staffPin');
+
+            if (role === 'doctor') {
+
+                idInput.value = 'DR-MH-4012';
+                pinInput.value = 'DocSecure#2026';
+
+            } else if (role === 'pharmacist') {
+
+                idInput.value = 'PH-MH-7734';
+                pinInput.value = 'PharmStock@99';
+
+            } else if (role === 'lab') {
+
+                idInput.value = 'LB-MH-2289';
+                pinInput.value = 'LabDiag#554';
+
+            }
+        }
+
+        /* View Routing */
+
+        function switchView(targetId) {
+
+            const views = document.querySelectorAll('.view-section');
+
+            views.forEach(view => {
+
+                if (view.id === targetId) {
+
+                    view.classList.remove('hidden');
+                    view.classList.add('flex');
+
+                } else {
+
+                    view.classList.add('hidden');
+                    view.classList.remove('flex');
+
+                }
+
+            });
+
+            window.scrollTo(0, 0);
+        }
+
+        /* Staff Login */
+
+        function processStaffLogin() {
+
+            const role = document.getElementById('staffRole').value;
+            const staffId = document.getElementById('staffId').value;
+            const btn = document.getElementById('staffLoginBtn');
+
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Authenticating...';
+
+            setTimeout(() => {
+
+                const roleNames = {
+                    doctor: 'Doctor / Medical Officer',
+                    pharmacist: 'PHC Pharmacist',
+                    lab: 'Lab Technician'
+                };
+
+                document.getElementById('staffRoleDisplay').innerText =
+                    roleNames[role] || 'Medical Officer';
+
+                /* FIX 1: Added template literal backticks */
+                document.getElementById('staffWelcomeTitle').innerText =
+                    `${staffId} (${role.toUpperCase()})`;
+
+                const icons = {
+                    doctor: 'fa-user-md',
+                    pharmacist: 'fa-pills',
+                    lab: 'fa-flask'
+                };
+
+                /* FIX 2: Added template literal backticks */
+                document.getElementById('roleIconHeader').className =
+                    `fas ${icons[role] || 'fa-user-md'}`;
+
+                const doctorCard =
+                    document.getElementById('doctorPatientCard');
+
+                const roleCard =
+                    document.getElementById('staffRoleSpecificCard');
+
+                if (role === 'doctor') {
+
+                    doctorCard.classList.remove('hidden');
+                    roleCard.classList.add('hidden');
+
+                } else {
+
+                    doctorCard.classList.add('hidden');
+                    roleCard.classList.remove('hidden');
+
+                    if (role === 'pharmacist') {
+
+                        document.getElementById('roleCardTitle').innerText =
+                            'Pharmacist Dispensing & Stock Report';
+
+                        document.getElementById('roleCardIcon').className =
+                            'fas fa-pills';
+
+                        document.getElementById('roleCardDesc').innerText =
+                            'Review e-prescriptions received from doctors and track PHC medicine stock availability.';
+
+                        renderPharmacistDashboard();
+
+                    } else if (role === 'lab') {
+
+                        document.getElementById('roleCardTitle').innerText =
+                            'Diagnostic Test Orders Queue';
+
+                        document.getElementById('roleCardIcon').className =
+                            'fas fa-flask';
+
+                        document.getElementById('roleCardDesc').innerText =
+                            'Receive diagnostic test orders from doctors, run analysis, and print result reports.';
+
+                        renderLabTechDashboard();
+
+                    }
+                }
+
+                switchView('staffDashboardView');
+
+                document.getElementById('logoutBtn')
+                    .classList.remove('hidden');
+
+                document.body.classList.replace(
+                    'bg-slate-50',
+                    'bg-slate-100'
+                );
+
+                btn.innerHTML = 'Authenticate & Enter';
+
+            }, 600);
+        }
+
+        /* Pharmacist Dashboard */
+
+        async function renderPharmacistDashboard() {
+
+    const container =
+        document.getElementById('departmentQueueContainer');
+
+    try {
+
+        // Get prescriptions from MongoDB
+        const response = await fetch(
+            'http://localhost:5000/api/prescriptions'
+        );
+
+        if (!response.ok) {
+            throw new Error('Failed to load prescriptions');
+        }
+
+        const prescriptions = await response.json();
+
+        console.log(
+            'Prescriptions loaded from MongoDB:',
+            prescriptions
+        );
+
+        // Convert backend data to the format
+        // already used by your existing UI
+        window.sharedPrescriptions = prescriptions.map(rx => ({
+
+            mongoId: rx._id,
+
+            id:
+                'RX-' +
+                Math.floor(1000 + Math.random() * 9000),
+
+            patient:
+                rx.patientId?.name || 'Unknown Patient',
+
+            abha:
+                rx.patientId?.abhaId || 'N/A',
+
+            meds:
+                `${rx.medicine} (${rx.instructions || 'As directed'})`,
+
+            doctor:
+                rx.doctorName,
+
+            status:
+                rx.status === 'Dispensed'
+                    ? 'Ready'
+                    : 'Pending Dispense',
+
+            date:
+                new Date(rx.date).toLocaleDateString()
+
+        }));
+
+        let html = `
+            <div class="space-y-3">
+
+                <h4 class="font-bold text-slate-800 text-sm">
+
+                    <i class="fas fa-file-prescription text-blue-600 mr-2"></i>
+
+                    Incoming E-Prescriptions from Doctors
+                    (${window.sharedPrescriptions.length})
+
+                </h4>
+        `;
+
+        window.sharedPrescriptions.forEach((rx, idx) => {
+
+            html += `
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+
+                    <div>
+
+                        <div class="flex items-center gap-2">
+
+                            <span class="font-bold text-slate-900 text-sm">
+                                ${rx.patient}
+                            </span>
+
+                            <span class="text-xs text-slate-400">
+                                (${rx.abha})
+                            </span>
+
+                        </div>
+
+                        <p class="text-xs font-semibold text-blue-600 mt-0.5">
+                            ${rx.meds}
+                        </p>
+
+                        <span class="text-[10px] text-slate-400">
+                            Prescribed by ${rx.doctor} • ${rx.date}
+                        </span>
+
+                    </div>
+
+                    <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+
+                        <span class="px-2.5 py-1 rounded-full text-xs font-bold ${
+                            rx.status === 'Ready'
+                                ? 'bg-emerald-100 text-emerald-800'
+                                : 'bg-blue-100 text-blue-800'
+                        }">
+
+                            ${rx.status}
+
+                        </span>
+
+                        ${rx.status !== 'Ready'
+                            ? `<button onclick="dispensePrescription(${idx})"
+                                class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold transition">
+                                Dispense
+                               </button>`
+                            : ''
+                        }
+
+                    </div>
+
+                </div>
+            `;
+        });
+
+        html += `
+            </div>
+
+            <div class="pt-6 border-t border-slate-100 space-y-3">
+
+                <h4 class="font-bold text-slate-800 text-sm">
+
+                    <i class="fas fa-boxes text-emerald-600 mr-2"></i>
+
+                    PHC Medicine Stock Report
+
+                </h4>
+
+                <div class="overflow-x-auto">
+
+                    <table class="w-full text-left text-xs text-slate-700 border-collapse">
+
+                        <thead>
+
+                            <tr class="bg-slate-100 border-b border-slate-200 text-slate-500 uppercase">
+
+                                <th class="p-3">Medicine Name</th>
+                                <th class="p-3">Category</th>
+                                <th class="p-3">Available Stock</th>
+                                <th class="p-3">Status</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody class="divide-y divide-slate-100">
+        `;
+
+        window.medicineStockReport.forEach(med => {
+
+            html += `
+                <tr>
+
+                    <td class="p-3 font-bold text-slate-900">
+                        ${med.name}
+                    </td>
+
+                    <td class="p-3 text-slate-500">
+                        ${med.category}
+                    </td>
+
+                    <td class="p-3 font-semibold">
+                        ${med.stock}
+                    </td>
+
+                    <td class="p-3">
+
+                        <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold ${med.badge}">
+                            ${med.status}
+                        </span>
+
+                    </td>
+
+                </tr>
+            `;
+
+        });
+
+        html += `
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+        `;
+
+        container.innerHTML = html;
+
+    } catch (error) {
+
+        console.error(
+            'Pharmacist dashboard error:',
+            error
+        );
+
+        showToast(
+            'Failed to load prescriptions from server.',
+            'error'
+        );
+    }
+}
+
+        async function dispensePrescription(idx) {
+
+    const prescription = window.sharedPrescriptions[idx];
+
+    if (!prescription || !prescription.mongoId) {
+        showToast('Prescription ID not found.', 'error');
+        return;
+    }
+
+    try {
+
+        const response = await fetch(
+            `http://localhost:5000/api/prescriptions/${prescription.mongoId}/dispense`,
+            {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || 'Failed to dispense prescription');
+        }
+
+        // Update the current dashboard
+        window.sharedPrescriptions[idx].status = 'Ready';
+
+        // Reload prescriptions from MongoDB
+        await renderPharmacistDashboard();
+
+        showToast(
+            'Prescription dispensed and inventory updated.'
+        );
+
+    } catch (error) {
+
+        console.error('Dispense error:', error);
+
+        showToast(
+            'Failed to dispense prescription.',
+            'error'
+        );
+    }
+}
+
+        /* Lab Technician Dashboard */
+
+        async function renderLabTechDashboard() {
+
+    const container =
+        document.getElementById('departmentQueueContainer');
+
+    try {
+
+        const response = await fetch(
+            'http://localhost:5000/api/lab-orders'
+        );
+
+        if (!response.ok) {
+            throw new Error('Failed to load lab orders');
+        }
+
+        const orders = await response.json();
+
+        console.log('Lab orders loaded from MongoDB:', orders);
+
+        // Convert MongoDB data to the existing UI format
+        window.sharedLabOrders = orders.map(order => ({
+            mongoId: order._id,
+            patientId: order.patientId?._id,
+            patient: order.patientId?.name || 'Unknown Patient',
+            abha: order.patientId?.abhaId || 'N/A',
+            test: order.testName,
+            doctor: order.doctorName,
+            status: order.status === 'Completed'
+                ? 'Sample Received'
+                : order.status === 'Sample Received'
+                    ? 'Sample Received'
+                    : 'Sample Collection Pending',
+            date: new Date(order.date).toLocaleDateString()
+        }));
+
+        let html = `
+            <div class="space-y-3">
+
+                <h4 class="font-bold text-slate-800 text-sm">
+
+                    <i class="fas fa-flask text-purple-600 mr-2"></i>
+
+                    Incoming Test Orders from Doctors
+                    (${window.sharedLabOrders.length})
+
+                </h4>
+        `;
+
+        window.sharedLabOrders.forEach((lab, idx) => {
+
+            const isReceived =
+                lab.status === 'Sample Received';
+
+            html += `
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+
+                    <div>
+
+                        <div class="flex items-center gap-2">
+
+                            <span class="font-bold text-slate-900 text-sm">
+                                ${lab.patient}
+                            </span>
+
+                            <span class="bg-purple-100 text-purple-800 px-2 py-0.5 rounded text-[10px] font-bold">
+                                ${lab.test}
+                            </span>
+
+                        </div>
+
+                        <p class="text-xs text-slate-500 mt-1">
+                            Requested by ${lab.doctor} • ${lab.date}
+                        </p>
+
+                    </div>
+
+                    <div class="flex items-center gap-3">
+
+                        <span class="px-2.5 py-1 rounded-full text-xs font-bold ${
+                            isReceived
+                                ? 'bg-emerald-100 text-emerald-800'
+                                : 'bg-amber-100 text-amber-800'
+                        }">
+
+                            ${lab.status}
+
+                        </span>
+
+                        ${isReceived
+                            ? `
+                            <button onclick="openLabModal('${lab.patient}', '${lab.test}')"
+                                    class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-semibold transition">
+
+                                <i class="fas fa-print mr-1"></i>
+                                Print Result Report
+
+                            </button>
+                            `
+                            : `
+                            <button onclick="markSampleReceived(${idx})"
+                                    class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-semibold transition">
+
+                                Mark Sample Received
+
+                            </button>
+                            `
+                        }
+
+                    </div>
+
+                </div>
+            `;
+        });
+
+        html += `</div>`;
+
+        container.innerHTML = html;
+
+    } catch (error) {
+
+        console.error('Lab dashboard error:', error);
+
+        showToast(
+            'Failed to load lab orders from server.',
+            'error'
+        );
+    }
+}
+async function markSampleReceived(idx) {
+
+    const labOrder = window.sharedLabOrders[idx];
+
+    if (!labOrder || !labOrder.mongoId) {
+        showToast('Lab order ID not found.', 'error');
+        return;
+    }
+
+    try {
+
+        const response = await fetch(
+            `http://localhost:5000/api/lab-orders/${labOrder.mongoId}/result`,
+            {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    result: 'Sample received. Analysis completed.'
+                })
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                data.message || 'Failed to update lab order'
+            );
+        }
+
+        console.log(
+            'Lab order updated in MongoDB:',
+            data.order
+        );
+
+        await renderLabTechDashboard();
+
+        showToast(
+            'Sample marked as received. Report analysis is now ready for printing.'
+        );
+
+    } catch (error) {
+
+        console.error(
+            'Sample received error:',
+            error
+        );
+
+        showToast(
+            'Failed to update sample status.',
+            'error'
+        );
+    }
+}
+        function refreshDepartmentQueue() {
+
+            const role =
+                document.getElementById('staffRole').value;
+
+            if (role === 'pharmacist') {
+
+                renderPharmacistDashboard();
+
+            } else if (role === 'lab') {
+
+                renderLabTechDashboard();
+
+            }
+
+            showToast('Queue refreshed successfully.');
+        }
+
+        /* ABHA Access Request */
+
+        async function requestPatientConsent() {
+
+    const role =
+        document.getElementById('staffRole').value;
+
+    if (role !== 'doctor') {
+
+        showToast(
+            'Access Denied: Patient clinical records are strictly restricted to Doctors.',
+            'error'
+        );
+
+        return;
+    }
+
+    const btn =
+        document.getElementById('requestConsentBtn');
+
+    const statusBox =
+        document.getElementById('consentStatus');
+
+    const abhaInput =
+        document.getElementById('targetAbhaId').value.trim();
+
+    if (!abhaInput) {
+
+        showToast(
+            'Please enter a valid ABHA ID.',
+            'error'
+        );
+
+        return;
+    }
+
+    btn.innerHTML =
+        '<i class="fas fa-spinner fa-spin mr-2"></i> Dispatching OTP Consent...';
+
+    btn.disabled = true;
+
+    statusBox.className =
+        'mt-4 p-4 rounded-xl text-center font-medium border border-blue-200 bg-blue-50 text-blue-700 block fade-in text-sm';
+
+    statusBox.innerHTML =
+        '<i class="fas fa-sms mr-2 animate-bounce"></i> Secure SMS Consent Request dispatched to Patient ABHA mobile... (Simulating patient approval)';
+
+    try {
+
+        // Wait to simulate patient consent
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        // Get patient from MongoDB
+        const response = await fetch(
+            `http://localhost:5000/api/patients/${encodeURIComponent(abhaInput)}`
+        );
+
+        if (!response.ok) {
+            throw new Error("Patient not found");
+        }
+
+        const patient = await response.json();
+
+        // Store patient for later use
+        window.currentDoctorPatient = patient;
+
+        console.log("Patient loaded from backend:", patient);
+
+        statusBox.className =
+            'mt-4 p-4 rounded-xl text-center font-medium border border-emerald-200 bg-emerald-50 text-emerald-700 block fade-in text-sm';
+
+        statusBox.innerHTML =
+            '<i class="fas fa-check-circle mr-2"></i> Patient Consent Granted! Loading Scoped Records...';
+
+        setTimeout(() => {
+
+            switchView('proPatientRecordView');
+
+            btn.innerHTML =
+                'Request Secure Access';
+
+            btn.disabled = false;
+
+            statusBox.classList.add('hidden');
+
+        }, 1000);
+
+    } catch (error) {
+
+        console.error("Patient access error:", error);
+
+        showToast(
+            'Patient not found. Please check the ABHA ID.',
+            'error'
+        );
+
+        btn.innerHTML =
+            'Request Secure Access';
+
+        btn.disabled = false;
+
+        statusBox.classList.add('hidden');
+    }
+}
+
+        /* Prescription Modal */
+
+        function openPrescriptionModal() {
+
+            document.getElementById('prescriptionModal')
+                .classList.remove('hidden');
+        }
+
+        function closePrescriptionModal() {
+
+            document.getElementById('prescriptionModal')
+                .classList.add('hidden');
+        }
+
+        async function submitEPrescription() {
+
+    const med =
+        document.getElementById('rxMedSelect').value;
+
+    const inst =
+        document.getElementById('rxInstructions').value.trim();
+
+    if (!med || !inst) {
+        showToast(
+            'Please select a medicine and enter instructions.',
+            'error'
+        );
+        return;
+    }
+
+    // Make sure a patient has been selected
+    if (!window.currentDoctorPatient) {
+        showToast(
+            'Please request patient access first.',
+            'error'
+        );
+        return;
+    }
+
+    try {
+
+        // Save prescription to MongoDB
+        const response = await fetch(
+            'http://localhost:5000/api/prescriptions',
+            {
+                method: 'POST',
+
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+
+                body: JSON.stringify({
+                    patientId:
+                        window.currentDoctorPatient._id,
+
+                    doctorName:
+                        document.getElementById('staffId').value,
+
+                    medicine:
+                        med,
+
+                    dosage:
+                        'As prescribed',
+
+                    instructions:
+                        inst
+                })
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error('Failed to save prescription');
+        }
+
+        const data = await response.json();
+
+        console.log(
+            'Prescription saved to MongoDB:',
+            data.prescription
+        );
+
+        // Keep existing shared prescription list
+        window.sharedPrescriptions.unshift({
+
+            id:
+                'RX-' +
+                Math.floor(1000 + Math.random() * 9000),
+
+            patient:
+                window.currentDoctorPatient.name,
+
+            abha:
+                window.currentDoctorPatient.abhaId,
+
+            meds:
+                `${med} (${inst})`,
+
+            doctor:
+                document.getElementById('staffId').value,
+
+            status:
+                'Pending Dispense',
+
+            date:
+                'Just now'
+        });
+
+        closePrescriptionModal();
+
+        showToast(
+            'E-Prescription successfully sent to PHC Pharmacist queue.'
+        );
+
+    } catch (error) {
+
+        console.error(
+            'Prescription error:',
+            error
+        );
+
+        showToast(
+            'Failed to save prescription.',
+            'error'
+        );
+    }
+}
+        /* Lab Order Modal */
+
+        function openLabOrderModal() {
+
+            document.getElementById('labOrderModal')
+                .classList.remove('hidden');
+        }
+
+        function closeLabOrderModal() {
+
+            document.getElementById('labOrderModal')
+                .classList.add('hidden');
+        }
+async function submitLabOrder() {
+
+    const testName =
+        document.getElementById('labTestSelect').value;
+
+    const notes =
+        document.getElementById('labNotes').value.trim();
+
+    // Make sure a patient is selected
+    if (!window.currentDoctorPatient) {
+        showToast(
+            'Please request patient access first.',
+            'error'
+        );
+        return;
+    }
+
+    if (!testName) {
+        showToast(
+            'Please select a lab test.',
+            'error'
+        );
+        return;
+    }
+
+    try {
+
+        // Save lab order to MongoDB
+        const response = await fetch(
+            'http://localhost:5000/api/lab-orders',
+            {
+                method: 'POST',
+
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+
+                body: JSON.stringify({
+                    patientId:
+                        window.currentDoctorPatient._id,
+
+                    doctorName:
+                        document.getElementById('staffId').value,
+
+                    testName:
+                        testName
+                })
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error('Failed to save lab order');
+        }
+
+        const data = await response.json();
+
+        console.log(
+            'Lab order saved to MongoDB:',
+            data.order
+        );
+
+        // Keep existing Lab UI working
+        window.sharedLabOrders.unshift({
+
+            id:
+                'LAB-' +
+                Math.floor(100 + Math.random() * 900),
+
+            patient:
+                window.currentDoctorPatient.name,
+
+            test:
+                testName,
+
+            doctor:
+                document.getElementById('staffId').value,
+
+            status:
+                'Sample Collection Pending',
+
+            date:
+                'Just now'
+        });
+
+        closeLabOrderModal();
+
+        showToast(
+            'Diagnostic test order successfully sent to Lab Technician queue.'
+        );
+
+    } catch (error) {
+
+        console.error(
+            'Lab order error:',
+            error
+        );
+
+        showToast(
+            'Failed to save lab order.',
+            'error'
+        );
+    }
+}
+
+        /* Save Clinical Record */
+
+        async function saveClinicalRecord() {
+
+    const notes =
+        document.getElementById('newClinicalNote').value.trim();
+
+    if (!notes) {
+
+        showToast(
+            'Please enter clinical observations.',
+            'error'
+        );
+
+        return;
+    }
+
+    // Make sure a patient was selected
+    if (!window.currentDoctorPatient) {
+
+        showToast(
+            'Please request patient access first.',
+            'error'
+        );
+
+        return;
+    }
+
+    try {
+
+        // Save clinical record to MongoDB
+        const response = await fetch(
+            'http://localhost:5000/api/records',
+            {
+                method: 'POST',
+
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+
+                body: JSON.stringify({
+                    patientId: window.currentDoctorPatient._id,
+
+                    doctorName:
+                        document.getElementById('staffId').value,
+
+                    diagnosis:
+                        'Routine checkup and patient progress observation.',
+
+                    symptoms:
+                        '',
+
+                    notes: notes
+                })
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error('Failed to save clinical record');
+        }
+
+        const data = await response.json();
+
+        console.log(
+            'Clinical record saved to MongoDB:',
+            data.record
+        );
+
+        // Keep the existing UI exactly the same
+        const list =
+            document.getElementById('doctorPatientHistoryList');
+
+        const newDiv =
+            document.createElement('div');
+
+        newDiv.className =
+            'bg-slate-50 p-4 rounded-xl border border-slate-200 fade-in';
+
+        newDiv.innerHTML = `
+            <div class="flex justify-between items-start mb-2">
+
+                <span class="text-xs font-bold bg-blue-100 text-blue-700 px-2.5 py-0.5 rounded">
+                    Today
+                </span>
+
+                <span class="text-xs text-slate-500 font-semibold">
+                    ${document.getElementById('staffId').value}
+                    (PHC Pune)
+                </span>
+
+            </div>
+
+            <h4 class="font-bold text-slate-800">
+                Follow-up Consultation Note
+            </h4>
+
+            <p class="text-xs font-semibold text-slate-500 mt-0.5">
+                Diagnosis: Routine checkup and patient progress observation.
+            </p>
+
+            <p class="text-sm text-slate-600 mt-1">
+                ${notes}
+            </p>
+        `;
+
+        list.prepend(newDiv);
+
+        document.getElementById('newClinicalNote').value = '';
+
+        showToast(
+            'Clinical record saved and synced securely to ABHA.'
+        );
+
+    } catch (error) {
+
+        console.error(
+            'Clinical record error:',
+            error
+        );
+
+        showToast(
+            'Failed to save clinical record.',
+            'error'
+        );
+    }
+}
+async function openLabModal(patientName, testName) {
+
+    const modal =
+        document.getElementById('labResultModal');
+
+    document.getElementById('labModalPatient').innerText =
+        patientName;
+
+    document.getElementById('labModalTestName').innerText =
+        testName;
+
+    modal.classList.remove('hidden');
+}
+        function closeLabModal() {
+
+            document.getElementById('labResultModal')
+                .classList.add('hidden');
+        }
+
+        /* Toast Notification */
+
+        function showToast(msg, type = 'success') {
+
+            const toast =
+                document.createElement('div');
+
+            toast.className =
+                'fixed bottom-5 right-5 z-[200] bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-2xl text-sm font-semibold flex items-center gap-2.5 fade-in';
+
+            /* FIX 6: Added template literal backticks */
+            toast.innerHTML = `
+                <i class="fas ${type === 'error'
+                    ? 'fa-exclamation-circle text-rose-400'
+                    : 'fa-check-circle text-emerald-400'}"></i>
+                ${msg}
+            `;
+
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        /* Multilingual Translation Engine */
+
+        const i18n = {
+
+            en: {
+
+                tagline:
+                    "Rural PHC Medical Professional Network",
+
+                staff_badge:
+                    "SIH26133 • Staff Portal",
+
+                login_title:
+                    "Professional Login",
+
+                login_subtitle:
+                    "Secure role-scoped access for PHC practitioners",
+
+                role_select:
+                    "Select Medical Role",
+
+                role_doctor:
+                    "Doctor / Medical Officer",
+
+                role_pharmacist:
+                    "PHC Pharmacist",
+
+                role_lab:
+                    "Lab Technician",
+
+                staff_id:
+                    "Staff ID / Medical Reg No.",
+
+                access_pin:
+                    "Secure PIN / Password",
+
+                login_secure:
+                    "Authenticate & Enter",
+
+                logout:
+                    "Logout",
+
+                connected_abha:
+                    "Connected to ABHA Gateway",
+
+                stat_consultations:
+                    "Today's Consultations",
+
+                stat_consents:
+                    "Verified Security",
+
+                request_access_title:
+                    "Request Patient Records (ABHA ID)",
+
+                request_access_desc:
+                    "Enter the patient's unique ABHA ID to request clinical history and past medical reports. A secure OTP consent notification will be dispatched instantly.",
+
+                patient_abha_label:
+                    "Patient ABHA ID",
+
+                btn_request:
+                    "Request Secure Access",
+
+                back_to_dashboard:
+                    "Back to Staff Dashboard",
+
+                consent_active:
+                    "Active Consent Session Verified",
+
+                past_records:
+                    "Past Medical Records & Clinical Notes"
+            },
+
+            hi: {
+
+                tagline:
+                    "ग्रामीण पीएचसी चिकित्सा पेशेवर नेटवर्क",
+
+                staff_badge:
+                    "SIH26133 • स्टाफ पोर्टल",
+
+                login_title:
+                    "प्रोफेशनल लॉगिन",
+
+                login_subtitle:
+                    "पीएचसी चिकित्सकों के लिए सुरक्षित भूमिका-आधारित पहुंच",
+
+                role_select:
+                    "चिकित्सा भूमिका चुनें",
+
+                role_doctor:
+                    "डॉक्टर / चिकित्सा अधिकारी",
+
+                role_pharmacist:
+                    "पीएचसी फार्मासिस्ट",
+
+                role_lab:
+                    "लैब तकनीशियन",
+
+                staff_id:
+                    "स्टाफ आईडी / मेडिकल रेज नं.",
+
+                access_pin:
+                    "सुरक्षित पिन / पासवर्ड",
+
+                login_secure:
+                    "प्रमाणित करें और प्रवेश करें",
+
+                logout:
+                    "लॉग आउट",
+
+                connected_abha:
+                    "आभा गेटवे से जुड़ा हुआ",
+
+                stat_consultations:
+                    "आज के परामर्श",
+
+                stat_consents:
+                    "सत्यापित सुरक्षा",
+
+                request_access_title:
+                    "रोगी रिकॉर्ड का अनुरोध करें (आभा आईडी)",
+
+                request_access_desc:
+                    "नैदानिक इतिहास और पिछले चिकित्सा रिपोर्ट का अनुरोध करने के लिए रोगी की अनूठी आभा आईडी दर्ज करें।",
+
+                patient_abha_label:
+                    "रोगी आभा आईडी",
+
+                btn_request:
+                    "सुरक्षित पहुंच का अनुरोध करें",
+
+                back_to_dashboard:
+                    "स्टाफ डैशबोर्ड पर वापस जाएं",
+
+                consent_active:
+                    "सक्रिय सहमति सत्र सत्यापित",
+
+                past_records:
+                    "पिछले मेडिकल रिकॉर्ड और क्लिनिकल नोट्स"
+            },
+
+            mr: {
+
+                tagline:
+                    "ग्रामीण पीएचसी वैद्यकीय व्यावसायिक नेटवर्क",
+
+                staff_badge:
+                    "SIH26133 • स्टाफ पोर्टल",
+
+                login_title:
+                    "प्रोफेशनल लॉगिन",
+
+                login_subtitle:
+                    "पीएचसी वैद्यांसाठी सुरक्षित भूमिका-आधारित प्रवेश",
+
+                role_select:
+                    "वैद्यकीय भूमिका निवडा",
+
+                role_doctor:
+                    "डॉक्टर / वैद्यकीय अधिकारी",
+
+                role_pharmacist:
+                    "पीएचसी फार्मासिस्ट",
+
+                role_lab:
+                    "लॅब तंत्रज्ञ",
+
+                staff_id:
+                    "स्टाफ आयडी / मेडिकल रेज नं.",
+
+                access_pin:
+                    "सुरक्षित पिन / पासवर्ड",
+
+                login_secure:
+                    "प्रमाणित करा आणि प्रवेश करा",
+
+                logout:
+                    "बाहेर पडा",
+
+                connected_abha:
+                    "आभा गेटवेशी जोडलेले",
+
+                stat_consultations:
+                    "आजचे सल्ले",
+
+                stat_consents:
+                    "सत्यापित सुरक्षा",
+
+                request_access_title:
+                    "रुग्ण नोंदींची विनंती करा (आभा आयडी)",
+
+                request_access_desc:
+                    "वैद्यकीय इतिहास आणि मागील वैद्यकीय अहवालांची विनंती करण्यासाठी रुग्णाचा युनिक आभा आयडी प्रविष्ट करा.",
+
+                patient_abha_label:
+                    "रुग्ण आभा आयडी",
+
+                btn_request:
+                    "सुरक्षित प्रवेश विनंती करा",
+
+                back_to_dashboard:
+                    "स्टाफ डॅशबोर्डवर परत जा",
+
+                consent_active:
+                    "सक्रिय संमती सत्र सत्यापित",
+
+                past_records:
+                    "मागील वैद्यकीय नोंदी आणि क्लिनिकल नोट्स"
+            }
+        };
+
+        /* Language Change */
+
+        function changeLanguage(langCode) {
+
+            const elements =
+                document.querySelectorAll('[data-i18n]');
+
+            elements.forEach(el => {
+
+                const key =
+                    el.getAttribute('data-i18n');
+
+                if (
+                    i18n[langCode] &&
+                    i18n[langCode][key]
+                ) {
+
+                    el.innerText =
+                        i18n[langCode][key];
+
+                }
+
+            });
+        }
+
+    </script>
+
+</body>
+</html>
